@@ -3,13 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NvkInWayWebApi", "NvkInWayWebApi.csproj", "{CCA5D89F-5BC7-40D7-9DD4-63FE6D45EEFA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NvkInWayWebApi", "NvkInWayWebApi.csproj", "{CCA5D89F-5BC7-40D7-9DD4-63FE6D45EEFA}"
+	ProjectSection(ProjectDependencies) = postProject
+		{268FDBEA-70FA-4B9E-96A5-5C4442E24F77} = {268FDBEA-70FA-4B9E-96A5-5C4442E24F77}
+		{913B8EBB-D840-43DC-A8B2-FDE002DC45B8} = {913B8EBB-D840-43DC-A8B2-FDE002DC45B8}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NvkInWayWebApi.Application", "..\NvkInWayWebApi.Application\NvkInWayWebApi.Application.csproj", "{D7B941B6-9F5C-4F65-A0D2-05E3CE5CA97E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NvkInWayWebApi.Application", "..\NvkInWayWebApi.Application\NvkInWayWebApi.Application.csproj", "{D7B941B6-9F5C-4F65-A0D2-05E3CE5CA97E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NvkInWayWebApi.Domain", "..\NvkInWayWebApi.Domain\NvkInWayWebApi.Domain.csproj", "{268FDBEA-70FA-4B9E-96A5-5C4442E24F77}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NvkInWayWebApi.Domain", "..\NvkInWayWebApi.Domain\NvkInWayWebApi.Domain.csproj", "{268FDBEA-70FA-4B9E-96A5-5C4442E24F77}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NvkInWayWebApi.Persistence", "..\NvkInWayWebApi.Persistence\NvkInWayWebApi.Persistence.csproj", "{913B8EBB-D840-43DC-A8B2-FDE002DC45B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NvkInWayWebApi.Persistence", "..\NvkInWayWebApi.Persistence\NvkInWayWebApi.Persistence.csproj", "{913B8EBB-D840-43DC-A8B2-FDE002DC45B8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{268FDBEA-70FA-4B9E-96A5-5C4442E24F77} = {268FDBEA-70FA-4B9E-96A5-5C4442E24F77}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
