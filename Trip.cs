@@ -26,4 +26,5 @@ public class Trip
     {
         return $"Из:{From} в:{To} цена:{Cost}";
     }
+
 }

@@ -20,7 +20,8 @@ class Program
 
     static async Task Main()
     {
-        _botClient = new TelegramBotClient("7563082499:AAG_9wHRaKIso0-u-9Osgmgy9xzsCOLjc1k");
+        //_botClient = new TelegramBotClient("7563082499:AAG_9wHRaKIso0-u-9Osgmgy9xzsCOLjc1k");
+        _botClient = new TelegramBotClient("8026874216:AAEOlGPMXT_IjX4GvctMpFm044q8tB2C2fc");
         _receiverOptions = new ReceiverOptions
         {
             AllowedUpdates = new[]

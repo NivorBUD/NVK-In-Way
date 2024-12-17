@@ -37,8 +37,22 @@ public static class MessageHandler
                 }
         }
     }
-
     public static async Task PrintStartMenu(ITelegramBotClient botClient, Chat chat)
+    {
+        var inlineKeyboard = new InlineKeyboardMarkup(
+            new List<InlineKeyboardButton[]>()
+            {
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Водитель", "driver_button"), 
+                    InlineKeyboardButton.WithCallbackData("Пассажир", "pas_button"), 
+                },
+            });
+                                
+        await botClient.SendTextMessageAsync(chat.Id, "Кто вы", replyMarkup: inlineKeyboard);
+    }
+
+    public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat)
     {
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
@@ -66,6 +80,50 @@ public static class MessageHandler
             replyMarkup: inlineKeyboard);
     }
 
+    public static async void PrintPassengerMenu(ITelegramBotClient botClient, Chat chat)
+    {
+        var inlineKeyboard = new InlineKeyboardMarkup(
+            new List<InlineKeyboardButton[]>()
+            {
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Посмотреть список активных поездок", "view_active"), 
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Посмотреть карточку", "view_info"), 
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Создание комнаты объединения в таксу", "create_room"), 
+                },
+            });
+         await botClient.SendTextMessageAsync(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
+    }
+
+    /*public static async void ViewActiveTrip(ITelegramBotClient botClient, Chat chat)
+    {
+        // Тестовый словарь, нужно поменять на все доступные поездки из БД
+        var active = new Dictionary<int, TripInfo>();
+        active[0] = new TripInfo("NVK - GUK", "1 - 2", 200, 3);
+        active[1] = new TripInfo("GUK - NVK", "1", 300, 1);
+
+        for (int i = 0; i < active.Count; i++)
+        {
+            var inlineKeyboard = new InlineKeyboardMarkup(
+                new List<InlineKeyboardButton[]>()
+                {
+                    new InlineKeyboardButton[]
+                    {
+                        InlineKeyboardButton.WithCallbackData("Подробнее", "moreInf"), 
+                    },
+                });
+            await botClient.SendTextMessageAsync(chat.Id, 
+                $"Активные поездки: {i+1}\nОткуда - Куда: {active[i].PlaceStartEnd}\nВремя: {active[i].TimeStartEnd}\nЦена: {active[i].Price}\nКолличество свободных мест: {active[i].Free}", 
+                 replyMarkup: inlineKeyboard);
+        }
+    }*/
+
     public static async void CheckStartChoice(ITelegramBotClient botClient, Update update)
     {
         if (Program.isBusy) return;
@@ -76,6 +134,30 @@ public static class MessageHandler
 
         switch (callbackQuery.Data)
         {
+            case "pas_button":
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    PrintPassengerMenu(botClient, chat);
+                    return;
+                }
+            case "driver_button":
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    PrintDriverMenu(botClient, chat);
+                    return;
+                }
+            case "view_info":
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    PassengerInfo.ShowPassangerCard(botClient, chat, update);
+                    return;
+                }
+            case "view_active":
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    ActiveTrip.ViewActiveTrip(botClient, chat);
+                    return;
+                }
             case "create profile":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
