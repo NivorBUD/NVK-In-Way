@@ -91,7 +91,7 @@ public static class ProfileHandler
                         driver.ToString(), 
                         cancellationToken: cancellationToken);
                     Program.StartWithStandardUpdateHandler();
-                    await MessageHandler.PrintStartMenu(botClient, chat, msg);
+                    await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;
                 }
         }
@@ -220,7 +220,7 @@ public static class ProfileHandler
                         driver.ToString(),
                         cancellationToken: cancellationToken);
                     Program.StartWithStandardUpdateHandler();
-                    await MessageHandler.PrintStartMenu(botClient, chat, msg);
+                    await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;
                 }
         }
