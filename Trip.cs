@@ -11,7 +11,7 @@ public class Trip
 {
     public string From;
     public string To;
-    public DateTime StartTime;
+    public int ToPair;
     public int NumberOfAvailableSeats;
     public int Cost;
     public string CarPosition;
@@ -24,6 +24,6 @@ public class Trip
 
     public override string ToString()
     {
-        return $"Из:{From} в:{To} цена:{Cost}";
+        return $"Из: {From} в: {To} цена: {Cost} руб";
     }
 }

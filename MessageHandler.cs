@@ -23,7 +23,7 @@ public static class MessageHandler
                 {
                     if (msg.Text == "/start")
                     {
-                        await PrintStartMenu(botClient, chat);
+                        await PrintStartMenu(botClient, chat, msg);
                         return;
                     }
                     return;
@@ -38,14 +38,16 @@ public static class MessageHandler
         }
     }
 
-    public static async Task PrintStartMenu(ITelegramBotClient botClient, Chat chat)
+    public static async Task PrintStartMenu(ITelegramBotClient botClient, Chat chat, Message msg)
     {
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
                 {
                     new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Создать профиль", "create profile")
+                        Program.DriversDataBase.ContainsKey(msg.From.Id) ?
+                            InlineKeyboardButton.WithCallbackData("Редактировать профиль", "change profile") :
+                            InlineKeyboardButton.WithCallbackData("Создать профиль", "create profile")
                     },
                     new InlineKeyboardButton[]
                     {
@@ -54,10 +56,6 @@ public static class MessageHandler
                     new InlineKeyboardButton[]
                     {
                         InlineKeyboardButton.WithCallbackData("Создать поездку", "create trip")
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData("Редактировать профиль", "change profile")
                     }
                 });
 
@@ -86,7 +84,15 @@ public static class MessageHandler
             case "check trips":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    await botClient.SendMessage(chat.Id, ProfileHandler.GetDriverTrips(user.Id));                    
+                    var trips = ProfileHandler.GetDriverTrips(user.Id);
+                    if (trips != "")
+                    {
+                        await botClient.SendMessage(chat.Id, trips);
+                    }
+                    else
+                    {
+                        await botClient.SendMessage(chat.Id, "У вас нет созданных поездок");
+                    }
                     return;
                 }
             case "create trip":
