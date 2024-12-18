@@ -7,6 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot;
 using static Telegram.Bot.TelegramBotClient;
 using Telegram.Bot.Polling;
+using System.Threading;
 
 namespace TGBotNVK;
 public static class ProfileHandler
@@ -27,6 +28,21 @@ public static class ProfileHandler
             await botClient.SendMessage(msg.Chat.Id, "Ваш профиль водителя заполнен");
             Program.isBusy = false;
             return;
+        }
+
+        await botClient.SendMessage(
+                        msg.Chat.Id,
+                        "Введите марку авто");
+
+        Program.StartBotWithAnotherUpdateHandler(CreateDriverProfile);
+    }
+
+    public static async void StartChangingDriverProfile(Message msg, ITelegramBotClient botClient)
+    {
+        if (!Program.DriversDataBase.TryGetValue(msg.Chat.Id, out var driver))
+        {
+            driver = new Driver();
+            Program.DriversDataBase[msg.Chat.Id] = driver;
         }
 
         await botClient.SendMessage(
@@ -75,6 +91,7 @@ public static class ProfileHandler
                         driver.ToString(), 
                         cancellationToken: cancellationToken);
                     Program.StartWithStandardUpdateHandler();
+                    await MessageHandler.PrintStartMenu(botClient, chat, msg);
                     return;
                 }
         }
@@ -116,43 +133,96 @@ public static class ProfileHandler
         var driver = Program.DriversDataBase[msg.From.Id];
         driver.CreatedTrip = driver.CreatedTrip == null ? new Trip(driver) : driver.CreatedTrip;
 
-        switch (creatingProfileStep)
+        switch (creatingTripStep)
         {
             case 0:
                 {
-                    driver.SetAutoName(msg.Text);
-                    driver.SetTGId(msg.From.Id);
+                    driver.CreatedTrip.From = msg.Text;
                     await botClient.SendMessage(
                         chat.Id,
-                        "Введите номер авто",
+                        "Введите точку назначения",
                         cancellationToken: cancellationToken);
-                    creatingProfileStep++;
+                    creatingTripStep++;
                     return;
                 }
             case 1:
                 {
-                    driver.SetAutoNumber(msg.Text);
+                    driver.CreatedTrip.To = msg.Text;
                     await botClient.SendMessage(
                         chat.Id,
-                        "Введите цвет авто",
+                        "К какой паре вам надо ехать?",
                         cancellationToken: cancellationToken);
-                    creatingProfileStep++;
+                    creatingTripStep++;
                     return;
                 }
             case 2:
                 {
-                    driver.SetAutoColor(msg.Text);
+                    if (!int.TryParse(msg.Text, out var pair))
+                    {
+                        await botClient.SendMessage(chat.Id, "Введите число");
+                        return;
+                    }
+
+                    driver.CreatedTrip.ToPair = pair;
+                    await botClient.SendMessage(
+                        chat.Id,
+                        "Сколько свободных мест в автомобиле?",
+                        cancellationToken: cancellationToken);
+                    creatingTripStep++;
+                    return;
+                }
+            case 3:
+                {
+                    if (!int.TryParse(msg.Text, out var seats))
+                    {
+                        await botClient.SendMessage(chat.Id, "Введите число");
+                        return;
+                    }
+
+                    if (seats <= 0 || seats >= 4)
+                    {
+                        await botClient.SendMessage(chat.Id, "Некорректное количество свободных мест");
+                        return;
+                    }
+
+                    driver.CreatedTrip.NumberOfAvailableSeats = seats;
+                    await botClient.SendMessage(
+                        chat.Id,
+                        "Какая стоимость поездки?",
+                        cancellationToken: cancellationToken);
+                    creatingTripStep++;
+                    return;
+                }
+            case 4:
+                {
+                    if (!int.TryParse(msg.Text, out var cost))
+                    {
+                        await botClient.SendMessage(chat.Id, "Введите число");
+                        return;
+                    }
+
+                    driver.CreatedTrip.Cost = cost;
+                    await botClient.SendMessage(
+                        chat.Id,
+                        "Опишите располложение автомобиля",
+                        cancellationToken: cancellationToken);
+                    creatingTripStep++;
+                    return;
+                }
+            case 5:
+                {
+                    driver.CreatedTrip.CarPosition = msg.Text;
+                    driver.EndCreatingTrip();
                     Program.isBusy = false;
-                    creatingProfileStep = 0;
+                    creatingTripStep = 0;
                     await botClient.SendMessage(
                         chat.Id,
                         driver.ToString(),
                         cancellationToken: cancellationToken);
                     Program.StartWithStandardUpdateHandler();
+                    await MessageHandler.PrintStartMenu(botClient, chat, msg);
                     return;
                 }
         }
     }
 }
-
-

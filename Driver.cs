@@ -47,9 +47,10 @@ public class Driver
         return $"Автомобиль: {autoName}, номер: {autoNumber}, цвет: {autoColor}, tg id: {TGId}";
     }
 
-    public void CreateTrip()
+    public void EndCreatingTrip()
     {
-
+        trips.Add(CreatedTrip);
+        CreatedTrip = new(this);
     }
 
     public string GetTrips()
