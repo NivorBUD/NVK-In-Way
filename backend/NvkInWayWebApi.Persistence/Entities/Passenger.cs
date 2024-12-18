@@ -1,0 +1,17 @@
+﻿using System;
+using System.Collections.Generic;
+
+namespace NvkInWayWebApi.Persistence.Entities;
+
+public partial class Passenger
+{
+    public string Id { get; set; } = null!;
+
+    public long TgProfileId { get; set; }
+
+    public int TripCount { get; set; }
+
+    public float? Rating { get; set; }
+
+    public virtual ICollection<Record> Records { get; set; } = new List<Record>();
+}
