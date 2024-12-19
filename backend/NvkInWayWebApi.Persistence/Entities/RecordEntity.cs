@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NvkInWayWebApi.Persistence.Entities;
 
-public partial class Record
+public partial class RecordEntity
 {
     public string Id { get; set; } = null!;
 
@@ -13,9 +13,9 @@ public partial class Record
 
     public string PassengerId { get; set; } = null!;
 
-    public virtual Driver Driver { get; set; } = null!;
+    public virtual DriverEntity Driver { get; set; } = null!;
 
-    public virtual Passenger Passenger { get; set; } = null!;
+    public virtual PassengerEntity Passenger { get; set; } = null!;
 
-    public virtual Trip Trip { get; set; } = null!;
+    public virtual TripEntity Trip { get; set; } = null!;
 }

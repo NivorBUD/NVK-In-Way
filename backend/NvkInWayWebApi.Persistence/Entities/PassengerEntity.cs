@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace NvkInWayWebApi.Persistence.Entities;
 
-public partial class Passenger
+public partial class PassengerEntity
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
     public long TgProfileId { get; set; }
 
@@ -13,5 +13,5 @@ public partial class Passenger
 
     public float? Rating { get; set; }
 
-    public virtual ICollection<Record> Records { get; set; } = new List<Record>();
+    public virtual ICollection<RecordEntity> Records { get; set; } = new List<RecordEntity>();
 }

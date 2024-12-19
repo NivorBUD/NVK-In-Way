@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace NvkInWayWebApi.Persistence.Entities;
 
-public partial class Trip
+public partial class TripEntity
 {
     public string Id { get; set; } = null!;
 
@@ -23,13 +23,13 @@ public partial class Trip
 
     public int BookedPlaces { get; set; }
 
-    public virtual Car Car { get; set; } = null!;
+    public virtual CarEntity Car { get; set; } = null!;
 
-    public virtual Driver Driver { get; set; } = null!;
+    public virtual DriverEntity Driver { get; set; } = null!;
 
-    public virtual Location EndPointNavigation { get; set; } = null!;
+    public virtual LocationEntity EndPointNavigation { get; set; } = null!;
 
-    public virtual ICollection<Record> Records { get; set; } = new List<Record>();
+    public virtual ICollection<RecordEntity> Records { get; set; } = new List<RecordEntity>();
 
-    public virtual Location StartPointNavigation { get; set; } = null!;
+    public virtual LocationEntity StartPointNavigation { get; set; } = null!;
 }

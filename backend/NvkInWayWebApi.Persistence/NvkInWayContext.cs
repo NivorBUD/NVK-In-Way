@@ -14,19 +14,19 @@ public partial class NvkInWayContext : DbContext
     {
     }
 
-    public virtual DbSet<Car> Cars { get; set; }
+    public virtual DbSet<CarEntity> Cars { get; set; }
 
-    public virtual DbSet<Driver> Drivers { get; set; }
+    public virtual DbSet<DriverEntity> Drivers { get; set; }
 
-    public virtual DbSet<Location> Locations { get; set; }
+    public virtual DbSet<LocationEntity> Locations { get; set; }
 
-    public virtual DbSet<Passenger> Passengers { get; set; }
+    public virtual DbSet<PassengerEntity> Passengers { get; set; }
 
-    public virtual DbSet<Record> Records { get; set; }
+    public virtual DbSet<RecordEntity> Records { get; set; }
 
-    public virtual DbSet<Taxis> Taxes { get; set; }
+    public virtual DbSet<TaxisEntity> Taxes { get; set; }
 
-    public virtual DbSet<Trip> Trips { get; set; }
+    public virtual DbSet<TripEntity> Trips { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
@@ -34,7 +34,7 @@ public partial class NvkInWayContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<Car>(entity =>
+        modelBuilder.Entity<CarEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("cars_pkey");
 
@@ -62,7 +62,7 @@ public partial class NvkInWayContext : DbContext
                 .HasConstraintName("car_driver_id_fkey");
         });
 
-        modelBuilder.Entity<Driver>(entity =>
+        modelBuilder.Entity<DriverEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("driver_id_pkey");
 
@@ -76,7 +76,7 @@ public partial class NvkInWayContext : DbContext
             entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
         });
 
-        modelBuilder.Entity<Location>(entity =>
+        modelBuilder.Entity<LocationEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("locations_pkey");
 
@@ -89,7 +89,7 @@ public partial class NvkInWayContext : DbContext
             entity.Property(e => e.Description).HasColumnName("description");
         });
 
-        modelBuilder.Entity<Passenger>(entity =>
+        modelBuilder.Entity<PassengerEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("passengers_pkey");
 
@@ -103,7 +103,7 @@ public partial class NvkInWayContext : DbContext
             entity.Property(e => e.TripCount).HasColumnName("trip_count");
         });
 
-        modelBuilder.Entity<Record>(entity =>
+        modelBuilder.Entity<RecordEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("claims_pkey");
 
@@ -138,7 +138,7 @@ public partial class NvkInWayContext : DbContext
                 .HasConstraintName("claim_trip_id_fkey");
         });
 
-        modelBuilder.Entity<Taxis>(entity =>
+        modelBuilder.Entity<TaxisEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("taxis_pkey");
 
@@ -168,7 +168,7 @@ public partial class NvkInWayContext : DbContext
                 .HasConstraintName("taxis_start_location_id_fkey");
         });
 
-        modelBuilder.Entity<Trip>(entity =>
+        modelBuilder.Entity<TripEntity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("trips_pkey");
 

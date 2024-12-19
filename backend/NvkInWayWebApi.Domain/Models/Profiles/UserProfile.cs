@@ -12,7 +12,7 @@ namespace NvkInWayWebApi.Domain.Models.Profiles
 
         public long TgProfileId { get; set; }
 
-        public int Rating { get; set; }
+        public float? Rating { get; set; }
 
         public int TripsCount { get; set; }
     }
