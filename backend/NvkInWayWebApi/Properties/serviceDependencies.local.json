@@ -1,16 +1,10 @@
 {
   "dependencies": {
     "secrets1": {
-      "type": "secrets.user"
-    },
-    "postgresql1": {
-      "containerPorts": "5432:5432",
-      "secretStore": "LocalSecretsFile",
-      "containerName": "postgresql",
-      "containerImage": "postgres",
-      "type": "postgresql.container",
-      "connectionId": "nvk_in_way",
-      "dynamicId": null
+      "secretStore": null,
+      "resourceId": null,
+      "type": "secrets.user",
+      "connectionId": null
     }
   }
 }

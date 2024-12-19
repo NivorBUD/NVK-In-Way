@@ -28,7 +28,7 @@ namespace NvkInWayWebApi.Application.Services
             return OperationResult<PassengerShortResDto>.Success(resDto);
         }
 
-        public async Task<OperationResult> AddPassengerProfileAsync(PassengerProfileReqDto passengerProfileReqDto)
+        public async Task<OperationResult> AddPassengerProfileAsync(PassengerShortProfileReqDto passengerProfileReqDto)
         {
             var newProfile = new PassengerProfile()
             {
@@ -36,6 +36,25 @@ namespace NvkInWayWebApi.Application.Services
             };
 
             await repository.AddPassengerAsync(newProfile);
+            return OperationResult.Success();
+        }
+
+        public async Task<OperationResult> DeletePassengerProfileAsync(long profileId)
+        {
+            await repository.DeletePassengerAsync(profileId);
+            return OperationResult.Success();
+        }
+
+        public async Task<OperationResult> UpdatePassengerProfileAsync(PassengerFullProfileReqDto passengerFullProfileReqDto)
+        {
+            var updatedProfile = new PassengerProfile()
+            {
+                Rating = passengerFullProfileReqDto.Rating,
+                TripsCount = passengerFullProfileReqDto.TripsCount,
+                TgProfileId = passengerFullProfileReqDto.TgProfileId
+            };
+
+            await repository.UpdatePassengerAsync(updatedProfile);
             return OperationResult.Success();
         }
     }

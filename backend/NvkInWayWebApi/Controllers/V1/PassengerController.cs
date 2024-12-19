@@ -39,7 +39,7 @@ namespace NvkInWayWebApi.Controllers.V1
         [HttpPost("create-passenger-profile")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public async Task<ActionResult> CreatePassengerProfile([FromBody] PassengerProfileReqDto passengerProfileReq)
+        public async Task<ActionResult> CreatePassengerProfile([FromBody] PassengerShortProfileReqDto passengerProfileReq)
         {
             var profileExsist = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
 
@@ -52,6 +52,37 @@ namespace NvkInWayWebApi.Controllers.V1
                 return BadRequest(addResult.ErrorText);
 
             return Created();
+        }
+
+        [HttpDelete("delete-passenger-profile")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult> DeletePassengerProfile([FromBody] PassengerShortProfileReqDto passengerProfileReq)
+        {
+            var profileExists = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
+
+            if (profileExists.IsSuccess)
+                await service.DeletePassengerProfileAsync(passengerProfileReq.TgProfileId);
+
+            return Ok();
+        }
+
+        [HttpPatch("update-passenger-rating")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult> UpdatePassengerRating([FromBody] PassengerFullProfileReqDto passengerProfileReq)
+        {
+            var profileExsist = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
+
+            if (profileExsist.IsSuccess)
+            {
+                var updateResult = await service.UpdatePassengerProfileAsync(passengerProfileReq);
+
+                if (!updateResult.IsSuccess)
+                    return BadRequest(updateResult.ErrorText);
+            }
+
+            return Ok();
         }
     }
 }

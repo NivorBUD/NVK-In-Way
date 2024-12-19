@@ -8,6 +8,10 @@ namespace NvkInWayWebApi.Application.Interfaces
     {
         public Task<OperationResult<PassengerShortResDto>> GetPassengerProfileByIdAsync(long profileId);
 
-        public Task<OperationResult> AddPassengerProfileAsync(PassengerProfileReqDto passengerProfileReqDto);
+        public Task<OperationResult> AddPassengerProfileAsync(PassengerShortProfileReqDto passengerProfileReqDto);
+
+        public Task<OperationResult> UpdatePassengerProfileAsync(PassengerFullProfileReqDto passengerFullProfileReqDto);
+
+        public Task<OperationResult> DeletePassengerProfileAsync(long profileId);
     }
 }
