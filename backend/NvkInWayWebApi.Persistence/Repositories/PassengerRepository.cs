@@ -33,10 +33,26 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         public async Task<OperationResult> UpdatePassengerAsync(PassengerProfile passenger)
         {
-            Update(MapFrom(passenger));
+            // Получаем существующего пассажира
+            var existingPassenger = await _dbSet
+                // Не отслеживаем существующий объект
+                .FirstOrDefaultAsync(p => p.TgProfileId == passenger.TgProfileId);
+
+            if (existingPassenger == null)
+            {
+                return OperationResult.Error("Пассажир не найден");
+            }
+
+            existingPassenger.Rating = passenger.Rating;
+            existingPassenger.TripCount = passenger.TripsCount;
+
+            // Применяем изменения
+            //_dbSet.Update(MapFrom(passenger));
+
             await SaveChangesAsync();
             return OperationResult.Success(201);
         }
+
 
         public async Task<OperationResult> DeletePassengerAsync(long profileId)
         {

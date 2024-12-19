@@ -80,12 +80,11 @@ public partial class NvkInWayContext : DbContext
 
         modelBuilder.Entity<PassengerEntity>(entity =>
         {
-            entity.HasKey(e => e.TgProfileId).HasName("passengers_pkey");
+            entity.HasKey(e => e.TgProfileId).HasName("tg_profile_id");
 
             entity.ToTable("passengers");
 
             entity.Property(e => e.Rating).HasColumnName("rating");
-            entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
             entity.Property(e => e.TripCount).HasColumnName("trip_count");
         });
 
