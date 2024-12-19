@@ -5,8 +5,6 @@ namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class DriverEntity
 {
-    public Guid Id { get; set; }
-
     public long TgProfileId { get; set; }
 
     public float? Rating { get; set; }

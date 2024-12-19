@@ -13,10 +13,10 @@ namespace NvkInWayWebApi.Domain.Models
         private const int MinLongitude = -180;
         private const int MaxLongitude = 180;
 
-        public double Latitude { get; }
-        public double Longitude { get; }
+        public double? Latitude { get; }
+        public double? Longitude { get; }
 
-        public Coordinate(double latitude, double longitude)
+        public Coordinate(double? latitude, double? longitude)
         {
             if (latitude < MinLatitude || latitude > MaxLatitude)
             {

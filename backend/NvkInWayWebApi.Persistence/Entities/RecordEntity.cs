@@ -7,11 +7,11 @@ public partial class RecordEntity
 {
     public Guid Id { get; set; }
 
-    public Guid DriverId { get; set; }
+    public long DriverId { get; set; }
 
     public Guid TripId { get; set; }
 
-    public Guid PassengerId { get; set; }
+    public long PassengerId { get; set; }
 
     public virtual DriverEntity Driver { get; set; } = null!;
 

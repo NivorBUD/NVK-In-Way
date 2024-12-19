@@ -14,7 +14,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         public async Task<OperationResult> AddTripAsync(Trip trip)
         {
-            await AddAsync(MapFrom(trip));
+            await AddAsync(TripEntity.MapFrom(trip));
             await SaveChangesAsync();
             return OperationResult.Success(201);
         }
@@ -50,7 +50,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
             foreach (var tripEntity in tripEntities)
             {
-                result.Add(MapFrom(tripEntity));
+                result.Add(TripEntity.MapFrom(tripEntity));
             }
 
             return OperationResult<List<Trip>>.Success(result);
@@ -69,7 +69,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
             foreach (var tripEntity in tripEntities)
             {
-                result.Add(MapFrom(tripEntity));
+                result.Add(TripEntity.MapFrom(tripEntity));
             }
 
             return OperationResult<List<Trip>>.Success(result);
@@ -78,39 +78,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
         public Task<OperationResult> UpdateTripAsync(Trip trip)
         {
             throw new NotImplementedException();
-        }
-
-        public TripEntity MapFrom(Trip trip)
-        {
-            return new TripEntity()
-            {
-                Id = trip.Id,
-                DriverId = trip.DriverId,
-                CarId = trip.DriverCar.Id,
-                StartPoint = trip.StartPoint,
-                EndPoint = trip.EndPoint,
-                DriveStartTime = trip.StartTime,
-                DriveEndTime = trip.EndTime,
-                TotalPlaces = trip.TotalPlaces,
-                BookedPlaces = trip.BookedPlaces
-            };
-        }
-
-        public Trip MapFrom(TripEntity trip)
-        {
-            // Добавить машину
-            return new Trip()
-            {
-                Id = trip.Id,
-                DriverId = trip.DriverId,
-                // DriverCar = trip.Car,
-                StartPoint = trip.StartPoint,
-                EndPoint = trip.EndPoint,
-                StartTime = trip.DriveStartTime,
-                EndTime = trip.DriveEndTime,
-                TotalPlaces = trip.TotalPlaces,
-                BookedPlaces = trip.BookedPlaces
-            };
         }
     }
 }

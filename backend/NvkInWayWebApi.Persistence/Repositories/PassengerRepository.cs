@@ -54,7 +54,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             return new PassengerEntity
             {
-                Id = passengerProfile.Id,
                 TgProfileId = passengerProfile.TgProfileId,
                 TripCount = passengerProfile.TripsCount,
                 Rating = passengerProfile.Rating,
@@ -65,7 +64,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             return new PassengerProfile
             {
-                Id = passengerProfile.Id,
                 TgProfileId = passengerProfile.TgProfileId,
                 TripsCount = passengerProfile.TripCount,
                 Rating = passengerProfile.Rating,

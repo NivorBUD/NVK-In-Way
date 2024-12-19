@@ -10,7 +10,7 @@ namespace NvkInWayWebApi.Domain.Models
     {
         public Guid Id { get; set; }
 
-        public Guid DriverId { get; set; }
+        public long DriverId { get; set; }
 
         public string Name { get; set; }
 

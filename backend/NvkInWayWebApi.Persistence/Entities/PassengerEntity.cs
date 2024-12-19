@@ -5,8 +5,6 @@ namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class PassengerEntity
 {
-    public Guid Id { get; set; }
-
     public long TgProfileId { get; set; }
 
     public int TripCount { get; set; }

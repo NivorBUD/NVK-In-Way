@@ -29,10 +29,6 @@ public partial class NvkInWayContext : DbContext
 
     public virtual DbSet<TripEntity> Trips { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=nvk_in_way;Username=nvk_in_way;Password=nvkthebest");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<CarEntity>(entity =>
@@ -41,9 +37,6 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("cars");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
             entity.Property(e => e.Color)
                 .HasMaxLength(20)
                 .HasColumnName("color");
@@ -59,19 +52,16 @@ public partial class NvkInWayContext : DbContext
 
             entity.HasOne(d => d.Driver).WithMany(p => p.Cars)
                 .HasForeignKey(d => d.DriverId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("car_driver_id_fkey");
         });
 
         modelBuilder.Entity<DriverEntity>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("driver_id_pkey");
+            entity.HasKey(e => e.TgProfileId).HasName("driver_id_pkey");
 
             entity.ToTable("drivers");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
             entity.Property(e => e.AllTripsCount).HasColumnName("all_trips_count");
             entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
@@ -83,22 +73,17 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("locations");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
-            entity.Property(e => e.Coordinate).HasColumnName("coordinate");
+            entity.Property(e => e.Latitude).HasColumnName("latitude");
+            entity.Property(e => e.Longitude).HasColumnName("longitude");
             entity.Property(e => e.Description).HasColumnName("description");
         });
 
         modelBuilder.Entity<PassengerEntity>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("passengers_pkey");
+            entity.HasKey(e => e.TgProfileId).HasName("passengers_pkey");
 
             entity.ToTable("passengers");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
             entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
             entity.Property(e => e.TripCount).HasColumnName("trip_count");
@@ -110,9 +95,6 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("records");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
             entity.Property(e => e.DriverId)
                 .HasMaxLength(40)
                 .HasColumnName("driver_id");
@@ -145,9 +127,6 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("taxis");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
             entity.Property(e => e.CountPlaces).HasColumnName("count_places");
             entity.Property(e => e.DriveEndTime).HasColumnName("drive_end_time");
             entity.Property(e => e.DriveStartTime).HasColumnName("drive_start_time");
@@ -171,49 +150,73 @@ public partial class NvkInWayContext : DbContext
 
         modelBuilder.Entity<TripEntity>(entity =>
         {
-            entity.HasKey(e => e.Id).HasName("trips_pkey");
+            // Установка первичного ключа
+            entity.HasKey(e => e.Id)
+                .HasName("trips_pkey");
 
+            // Настройка таблицы
             entity.ToTable("trips");
 
-            //entity.Property(e => e.Id)
-            //    .HasMaxLength(40)
-            //    .HasColumnName("id");
-            entity.Property(e => e.BookedPlaces).HasColumnName("booked_places");
-            entity.Property(e => e.CarId)
-                .HasMaxLength(40)
-                .HasColumnName("car_id");
-            entity.Property(e => e.DriveEndTime).HasColumnName("drive_end_time");
-            entity.Property(e => e.DriveStartTime).HasColumnName("drive_start_time");
+            // Настройка свойств
             entity.Property(e => e.DriverId)
-                .HasMaxLength(40)
-                .HasColumnName("driver_id");
-            entity.Property(e => e.EndPoint)
-                .HasMaxLength(20)
-                .HasColumnName("end_point");
-            entity.Property(e => e.StartPoint)
-                .HasMaxLength(20)
-                .HasColumnName("start_point");
-            entity.Property(e => e.TotalPlaces).HasColumnName("total_places");
+                .HasColumnName("driver_id")
+                .IsRequired(); // Обязательно
 
-            entity.HasOne(d => d.Car).WithMany(p => p.Trips)
+            entity.Property(e => e.CarId)
+                .HasColumnName("car_id")
+                .IsRequired(); // Обязательно
+
+            entity.Property(e => e.StartPointId)
+                .HasColumnName("startpoint_id")
+                .IsRequired(); // Обязательно
+
+            entity.Property(e => e.EndPointId)
+                .HasColumnName("endpoint_id")
+                .IsRequired(); // Обязательно
+
+            entity.Property(e => e.CarLocation)
+                .HasColumnName("carlocation")
+                .HasMaxLength(255); // Максимальная длина строки
+
+            entity.Property(e => e.DriveStartTime)
+                .HasColumnName("drive_start_time");
+
+            entity.Property(e => e.DriveEndTime)
+                .HasColumnName("drive_end_time")
+                .IsRequired(); // Обязательно
+
+            entity.Property(e => e.TotalPlaces)
+                .HasColumnName("total_places")
+                .IsRequired(); // Обязательно
+
+            entity.Property(e => e.BookedPlaces)
+                .HasColumnName("booked_places")
+                .IsRequired(); // Обязательно
+
+            // Настройка отношений с другими сущностями
+            entity.HasOne(d => d.Car)
+                .WithMany() // Предполагается, что у Car нет навигационного свойства для поездок
                 .HasForeignKey(d => d.CarId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("trip_car_id_fkey");
+                .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
+                .HasConstraintName("fk_trips_car");
 
-            entity.HasOne(d => d.Driver).WithMany(p => p.Trips)
+            entity.HasOne(d => d.Driver)
+                .WithMany() // Предполагается, что у Driver нет навигационного свойства для поездок
                 .HasForeignKey(d => d.DriverId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("trip_driver_id_fkey");
+                .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
+                .HasConstraintName("fk_trips_driver");
 
-            entity.HasOne(d => d.EndPointNavigation).WithMany(p => p.TripEndPointNavigations)
-                .HasForeignKey(d => d.EndPoint)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("trip_end_point_id_fkey");
+            entity.HasOne(d => d.StartPointNavigation)
+                .WithMany() // Предполагается, что у Location нет навигационного свойства для поездок
+                .HasForeignKey(d => d.StartPointId)
+                .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
+                .HasConstraintName("fk_trips_start_point");
 
-            entity.HasOne(d => d.StartPointNavigation).WithMany(p => p.TripStartPointNavigations)
-                .HasForeignKey(d => d.StartPoint)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("trip_start_point_id_fkey");
+            entity.HasOne(d => d.EndPointNavigation)
+                .WithMany() // Предполагается, что у Location нет навигационного свойства для поездок
+                .HasForeignKey(d => d.EndPointId)
+                .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
+                .HasConstraintName("fk_trips_end_point");
         });
 
         OnModelCreatingPartial(modelBuilder);

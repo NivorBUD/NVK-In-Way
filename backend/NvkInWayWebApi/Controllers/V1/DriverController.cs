@@ -58,24 +58,6 @@ namespace NvkInWayWebApi.Controllers
             return Created();
         }
 
-        /// <summary>
-        /// Deletes the user profile with the corresponding telegram ID
-        /// </summary>
-        /// <param name="profileId">telegram user ID</param>
-        /// <returns></returns>
-        [HttpDelete("del-profile/{profileId}")]
-        [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status204NoContent)]
-        public async Task<ActionResult<DriverProfileResDto>> DeleteDriverProfileById(long profileId)
-        {
-            var result = await service.DeleteDriverProfileByIdAsync(profileId);
-
-            if (!result.IsSuccess)
-                return BadRequest(result.ErrorText);
-
-            return NoContent();
-        }
-
         #endregion
 
 
@@ -142,31 +124,5 @@ namespace NvkInWayWebApi.Controllers
         }
 
         #endregion
-
-        /// <summary>
-        /// Creates a new trip
-        /// </summary>
-        /// <param name="createReqDto">Trip data</param>
-        /// <returns></returns>
-        [HttpPost("create-trip")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<ActionResult> CreateTrip([FromBody] CreateTripReqDto createReqDto)
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
-        /// Returns all active trips for the driver
-        /// </summary>
-        /// <param name="profileId">telegram user ID</param>
-        /// <returns></returns>
-        [HttpGet("get-active-trip/{profileId}")]
-        [Produces("application/json")]
-        [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long profileId)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

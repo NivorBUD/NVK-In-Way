@@ -51,59 +51,108 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         public async Task<OperationResult> UpdateDriverCarsAsync(long driverId, List<Car> cars)
         {
-            var dbEntity = await _context.Set<DriverEntity>()
-                .Include(d => d.Cars)
-                .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
+            if (cars == null || !cars.Any())
+                return OperationResult.Error("Список машин не может быть пустым");
 
-            foreach (var car in cars)
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                if(!dbEntity.Cars.Any(c => c.Id == car.Id))
-                    return OperationResult<DriverProfile>.Error("У пользователя не существует какой-либо из переданных машин");
+                var dbEntity = await _context.Set<DriverEntity>()
+                    .Include(d => d.Cars)
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
+
+                if (dbEntity == null)
+                    return OperationResult.Error("Водитель не найден");
+
+                foreach (var car in cars)
+                {
+                    if (!dbEntity.Cars.Any(c => c.Id == car.Id))
+                        return OperationResult.Error(
+                            $"Обновление не возможно у пользователя не существует машина с таким id = {car.Id}");
+                }
+
+                foreach (var car in cars)
+                {
+                    _context.Set<CarEntity>().Update(new CarEntity()
+                    {
+                        Id = car.Id,
+                        DriverId = dbEntity.TgProfileId,
+                        Color = car.Color,
+                        Name = car.Name,
+                        Number = car.Number
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync(); // Завершение транзакции
             }
-            
-            Update(dbEntity);
-            SaveChangesAsync();
+            catch (DbUpdateConcurrencyException ex)
+            {
+                await transaction.RollbackAsync(); // Откат транзакции
+                return OperationResult.Error("Произошла ошибка при добавлении автомобилей. Возможно, данные были изменены.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(); // Откат транзакции
+                return OperationResult.Error("Произошла ошибка: " + ex.Message);
+            }
 
             return OperationResult.Success(204);
         }
 
         public async Task<OperationResult> AddDriverCarsAsync(long driverId, List<Car> cars)
         {
-            using var transaction = await _context.Database.BeginTransactionAsync();
-
-            var dbEntity = await _context.Set<DriverEntity>()
-                .Include(d => d.Cars)
-                .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
-
-            if (dbEntity == null)
-                return OperationResult.Error("Водитель не найден");
-
             if (cars == null || !cars.Any())
                 return OperationResult.Error("Список машин не может быть пустым");
 
-            foreach (var car in cars)
-            {
-                if (dbEntity.Cars.Any(c => c.Id == car.Id))
-                    return OperationResult.Error($"У пользователя уже существует машина с таким id = {car.Id}");
-            }
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-            foreach (var car in cars)
+            try
             {
-                dbEntity.Cars.Add(new CarEntity()
+                var dbEntity = await _context.Set<DriverEntity>()
+                    .Include(d => d.Cars)
+                    .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
+
+                if (dbEntity == null)
+                    return OperationResult.Error("Водитель не найден");
+
+                foreach (var car in cars)
                 {
-                    Id = Guid.NewGuid(),
-                    DriverId = dbEntity.Id,
-                    Driver = dbEntity,
-                    Color = car.Color,
-                    Name = car.Name,
-                    Number = car.Number
-                });
-            }
+                    if (dbEntity.Cars.Any(c => c.Id == car.Id))
+                        return OperationResult.Error($"У пользователя уже существует машина с таким id = {car.Id}");
+                }
 
-            await _context.SaveChangesAsync();
+                foreach (var car in cars)
+                {
+                    await _context.Set<CarEntity>().AddAsync(new CarEntity()
+                    {
+                        Id = Guid.NewGuid(), // Генерация нового идентификатора
+                        DriverId = dbEntity.TgProfileId,
+                        Color = car.Color,
+                        Name = car.Name,
+                        Number = car.Number
+                    });
+                }
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync(); // Завершение транзакции
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                await transaction.RollbackAsync(); // Откат транзакции
+                return OperationResult.Error("Произошла ошибка при добавлении автомобилей. Возможно, данные были изменены.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(); // Откат транзакции
+                return OperationResult.Error("Произошла ошибка: " + ex.Message);
+            }
 
             return OperationResult.Success(204);
         }
+
 
 
         public async Task<OperationResult> DeleteDriverCarsAsync(long driverId, List<Guid> carsIds)
@@ -136,7 +185,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             return new DriverEntity
             {
-                Id = profile.Id,
                 TgProfileId = profile.TgProfileId,
                 Rating = profile.Rating,
                 AllTripsCount = profile.TripsCount,
@@ -150,7 +198,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             return new DriverProfile
             {
-                Id = driverEntity.Id,
                 TgProfileId = driverEntity.TgProfileId,
                 Rating = driverEntity.Rating,
                 TripsCount = driverEntity.AllTripsCount,
