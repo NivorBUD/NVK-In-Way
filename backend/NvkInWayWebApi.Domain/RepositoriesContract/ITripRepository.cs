@@ -4,9 +4,9 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
 {
     public interface ITripRepository
     {
-        public Task<OperationResult<Trip>> GetTripByDriverIdAsync(Guid driverId);
+        public Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId);
 
-        public Task<OperationResult<Trip>> GetTripByPassengerIdAsync(Guid passengerId);
+        public Task<OperationResult<List<Trip>>> GetTripsByCarIdAsync(Guid carId);
 
         public Task<OperationResult<Trip>> GetAllTripsAsync();
 

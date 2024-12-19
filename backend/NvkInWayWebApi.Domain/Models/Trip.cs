@@ -1,16 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NvkInWayWebApi.Domain.Models
+﻿namespace NvkInWayWebApi.Domain.Models
 {
     public class Trip
     {
         public Guid Id { get; set; }
 
-        public Guid DriverId { get; set; }
+        public long DriverId { get; set; }
 
         public Location StartPoint { get; set; }
 

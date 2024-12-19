@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using NvkInWayWebApi.Domain.Models;
 
 namespace NvkInWayWebApi.Persistence.Entities;
 
@@ -7,17 +6,17 @@ public partial class TripEntity
 {
     public Guid Id { get; set; }
 
-    public Guid DriverId { get; set; }
+    public long DriverId { get; set; }
 
     public Guid CarId { get; set; }
 
-    public Guid StartPoint { get; set; }
+    public Location StartPoint { get; set; }
 
-    public Guid EndPoint { get; set; }
+    public Location EndPoint { get; set; }
 
-    public DateOnly? DriveStartTime { get; set; }
+    public DateTime DriveStartTime { get; set; }
 
-    public DateOnly? DriveEndTime { get; set; }
+    public DateTime DriveEndTime { get; set; }
 
     public int TotalPlaces { get; set; }
 
