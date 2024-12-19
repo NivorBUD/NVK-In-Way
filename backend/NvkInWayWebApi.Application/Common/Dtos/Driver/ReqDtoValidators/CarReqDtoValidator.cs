@@ -15,10 +15,9 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtoValidators
             RuleFor(x => x.AutoNumber)
                 .NotEmpty()
                 .WithMessage("Номер автомобиля не может быть пустым.")
-                .Matches(@"^[A-Z]\d{3}[A-Z]{2}\d{3}$")
-                .WithMessage("Номер автомобиля должен соответствовать формату 'A99AA999'.")
-                .Length(8, 9)
-                .WithMessage("Длина номера должна составлять от 8 до 9 символов.");
+                .Matches(@"^[А-ЯЁ][0-9]{3}[А-ЯЁ]{2}[0-9]{2,3}$")
+                .WithMessage("Номер автомобиля должен соответствовать формату 'А999БВ22' или 'А999БВ222'.");
+
 
             RuleFor(c => c.AutoColor)
                 .NotEmpty()

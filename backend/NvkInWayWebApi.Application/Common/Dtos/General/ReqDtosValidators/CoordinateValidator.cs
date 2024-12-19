@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtoValidators
+namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtosValidators
 {
     public class CoordinateValidator : AbstractValidator<Coordinate>
     {
