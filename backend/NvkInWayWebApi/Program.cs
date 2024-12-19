@@ -1,10 +1,9 @@
 
 using Asp.Versioning;
-using Microsoft.OpenApi.Models;
-using NvkInWayWebApi.ForSwagger;
-using System.Reflection;
 using NvkInWayWebApi.Application;
+using NvkInWayWebApi.ForSwagger;
 using NvkInWayWebApi.Persistence;
+using System.Reflection;
 
 namespace NvkInWayWebApi
 {

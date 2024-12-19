@@ -32,9 +32,7 @@ namespace NvkInWayWebApi.Application.Services
         {
             var newProfile = new PassengerProfile()
             {
-                TgProfileId = passengerProfileReqDto.TgProfileId,
-                Rating = passengerProfileReqDto.Rating,
-                TripsCount = passengerProfileReqDto.TripsCount
+                TgProfileId = passengerProfileReqDto.TgProfileId
             };
 
             await repository.AddPassengerAsync(newProfile);

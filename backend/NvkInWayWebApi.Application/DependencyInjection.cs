@@ -1,17 +1,12 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using NvkInWayWebApi.Application.Interfaces;
-using NvkInWayWebApi.Application.Services;
-using FluentValidation;
+﻿using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using NvkInWayWebApi.Application.Common;
+using NvkInWayWebApi.Application.Interfaces;
+using NvkInWayWebApi.Application.Services;
+using System.Reflection;
 
 namespace NvkInWayWebApi.Application
 {
@@ -21,7 +16,7 @@ namespace NvkInWayWebApi.Application
         {
             services.AddScoped<IDriverService, DriverService>();
 
-            //services.AddScoped<IPassengerService, PassengerService>();
+            services.AddScoped<IPassengerService, PassengerService>();
 
             return services;
         }

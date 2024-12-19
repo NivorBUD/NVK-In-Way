@@ -1,10 +1,8 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
-using System.Net;
 
 namespace NvkInWayWebApi.Controllers.V1
 {
@@ -54,19 +52,6 @@ namespace NvkInWayWebApi.Controllers.V1
                 return BadRequest(addResult.ErrorText);
 
             return Created();
-        }
-
-        /// <summary>
-        /// Sign up for a new trip
-        /// </summary>
-        /// <param name="createReqDto">Trip data</param>
-        /// <returns></returns>
-        [HttpPost("sign-up-trip")]
-        [Produces("application/json")]
-        [ProducesResponseType((int)HttpStatusCode.Created)]
-        public async Task<ActionResult> SignUpForTrip([FromBody] CreateTripReqDto createReqDto)
-        {
-            throw new NotImplementedException();
         }
     }
 }
