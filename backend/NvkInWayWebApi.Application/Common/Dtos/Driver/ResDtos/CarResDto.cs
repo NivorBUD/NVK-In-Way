@@ -9,6 +9,8 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Driver
 {
     public class CarResDto
     {
+        public Guid AutoId { get; set; }
+
         public string AutoName { get; set; }
 
         public string AutoNumber { get; set; }
@@ -19,6 +21,7 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Driver
         {
             return new()
             {
+                AutoId = car.Id,
                 AutoName = car.Name,
                 AutoNumber = car.Number,
                 AutoColor = car.Color

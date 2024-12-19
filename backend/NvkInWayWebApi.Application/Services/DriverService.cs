@@ -41,8 +41,6 @@ namespace NvkInWayWebApi.Application.Services
             var newProfile = new DriverProfile()
             {
                 TgProfileId = driverProfileReqDto.TgProfileId,
-                Rating = driverProfileReqDto.Rating,
-                TripsCount = driverProfileReqDto.AllTripsCount,
                 Cars = driverProfileReqDto.Cars.Select(c => new Car()
                 {
                     Name = c.AutoName,

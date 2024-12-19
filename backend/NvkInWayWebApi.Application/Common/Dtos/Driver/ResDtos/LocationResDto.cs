@@ -9,6 +9,8 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos
 {
     public class LocationResDto
     {
+        public Guid Id { get; set; }
+
         public string TextDescription { get; set; }
 
         public Coordinate Coordinate { get; set; }

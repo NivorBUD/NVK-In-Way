@@ -19,7 +19,7 @@ namespace NvkInWayWebApi.Controllers
         {
             this.service = service;
         }
-        
+
         /// <summary>
         /// Gets the driver's profile by the telegram user ID
         /// </summary>
