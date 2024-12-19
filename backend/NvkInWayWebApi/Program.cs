@@ -19,7 +19,7 @@ namespace NvkInWayWebApi
             builder.Services.AddDataAccess(configuration);
             builder.Services.AddApplication();
 
-            builder.Services.AddControllers();
+            builder.Services.AddControllerWithInlineValidation(configuration);
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
