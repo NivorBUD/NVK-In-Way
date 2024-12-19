@@ -1,12 +1,13 @@
 ﻿using FluentValidation;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
+using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtoValidators;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtoValidators
+namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtosValidators
 {
     public class LocationReqDtoValidator : AbstractValidator<LocationReqDto>
     {

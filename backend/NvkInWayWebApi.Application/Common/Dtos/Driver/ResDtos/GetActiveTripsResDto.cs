@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
+using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
 
 namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos
 {

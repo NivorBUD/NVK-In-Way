@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using NvkInWayWebApi.Application.Common.Dtos.Driver;
+using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
 using NvkInWayWebApi.Domain.Models.Profiles;
 
 namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos

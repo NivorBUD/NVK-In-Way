@@ -51,7 +51,7 @@ public partial class NvkInWayContext : DbContext
                 .HasMaxLength(40)
                 .HasColumnName("driver_id");
             entity.Property(e => e.Name)
-                .HasMaxLength(20)
+                .HasMaxLength(40)
                 .HasColumnName("name");
             entity.Property(e => e.Number)
                 .HasMaxLength(9)

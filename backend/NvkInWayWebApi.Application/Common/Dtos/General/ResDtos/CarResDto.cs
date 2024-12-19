@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NvkInWayWebApi.Domain.Models;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.Driver
+namespace NvkInWayWebApi.Application.Common.Dtos.General.ResDtos
 {
     public class CarResDto
     {

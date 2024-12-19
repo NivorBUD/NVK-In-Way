@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos
+namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos
 {
     public class LocationResDto
     {
