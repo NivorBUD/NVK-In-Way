@@ -1,20 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NvkInWayWebApi.Domain.Models.Profiles;
+﻿using NvkInWayWebApi.Domain.Models.Profiles;
 
 namespace NvkInWayWebApi.Domain.RepositoriesContract
 {
     public interface IPassengerRepository
     {
-        public Task<PassengerProfile?> GetPassengerWithRecordsAsync(Guid id);
+        public Task<OperationResult<PassengerProfile>> GetPassengerWithRecordsAsync(long id);
 
-        public Task AddPassengerAsync(PassengerProfile passenger);
+        public Task<OperationResult> AddPassengerAsync(PassengerProfile passenger);
 
-        public Task UpdatePassengerAsync(PassengerProfile passenger);
+        public Task<OperationResult> UpdatePassengerAsync(PassengerProfile passenger);
 
-        public Task DeletePassengerAsync(Guid id);
+        public Task<OperationResult> DeletePassengerAsync(long id);
     }
 }

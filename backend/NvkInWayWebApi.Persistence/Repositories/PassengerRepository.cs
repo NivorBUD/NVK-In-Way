@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models.Profiles;
 using NvkInWayWebApi.Domain.RepositoriesContract;
 using NvkInWayWebApi.Persistence.Entities;
@@ -9,35 +10,44 @@ namespace NvkInWayWebApi.Persistence.Repositories
     {
         public PassengerRepository(NvkInWayContext context) : base(context) { }
 
-        public async Task<PassengerProfile?> GetPassengerWithRecordsAsync(Guid id)
+        public async Task<OperationResult<PassengerProfile>> GetPassengerWithRecordsAsync(long profileId)
         {
-            var passangerEntity = await _context.Set<PassengerEntity>()
+            var passengerEntity = await _context.Set<PassengerEntity>()
                 .Include(p => p.Records)
-                .FirstOrDefaultAsync(p => p.Id == id);
+                .FirstOrDefaultAsync(p => p.TgProfileId == profileId);
 
-            return MapFrom(passangerEntity);
+            if (passengerEntity == null)
+                return OperationResult<PassengerProfile>.Error("Пользователь с таким профилем не найден");
+
+            var profile = MapFrom(passengerEntity);
+
+            return OperationResult<PassengerProfile>.Success(profile);
         }
 
-        public async Task AddPassengerAsync(PassengerProfile passenger)
+        public async Task<OperationResult> AddPassengerAsync(PassengerProfile passenger)
         {
             await AddAsync(MapFrom(passenger));
             await SaveChangesAsync();
+            return OperationResult.Success(201);
         }
 
-        public async Task UpdatePassengerAsync(PassengerProfile passenger)
+        public async Task<OperationResult> UpdatePassengerAsync(PassengerProfile passenger)
         {
             Update(MapFrom(passenger));
             await SaveChangesAsync();
+            return OperationResult.Success(201);
         }
 
-        public async Task DeletePassengerAsync(Guid id)
+        public async Task<OperationResult> DeletePassengerAsync(long profileId)
         {
-            var passenger = await GetByIdAsync(id);
+            var passenger = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
             if (passenger != null)
             {
                 Delete(passenger);
                 await SaveChangesAsync();
+                return OperationResult.Success(204);
             }
+            return OperationResult.Error("Профиль для удаления не обнаружен");
         }
 
         public PassengerEntity MapFrom(PassengerProfile passengerProfile)

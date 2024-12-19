@@ -1,10 +1,10 @@
-﻿using System.Net;
-using Asp.Versioning;
-using Microsoft.AspNetCore.Http.HttpResults;
+﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
+using System.Net;
 
 namespace NvkInWayWebApi.Controllers
 {
@@ -32,9 +32,9 @@ namespace NvkInWayWebApi.Controllers
         {
             var result = await service.GetDriverProfileByIdAsync(profileId);
 
-            if(!result.IsSuccess)
+            if (!result.IsSuccess)
                 return BadRequest(result.ErrorText);
-                
+
             return Ok(result.Data);
         }
 
