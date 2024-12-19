@@ -36,8 +36,18 @@ namespace NvkInWayWebApi.Application.Services
             return OperationResult<DriverProfileResDto>.Success(resDto);
         }
 
+        public async Task<OperationResult> DeleteDriverProfileByIdAsync(long profileId)
+        {
+            return await repository.DeleteDriverAsync(profileId);
+        }
+
         public async Task<OperationResult> AddDriverProfileAsync(DriverProfileReqDto driverProfileReqDto)
         {
+            var profileExist = await GetDriverProfileByIdAsync(driverProfileReqDto.TgProfileId);
+
+            if (profileExist.IsSuccess)
+                return OperationResult.Error("Профиль уже существует");
+
             var newProfile = new DriverProfile()
             {
                 TgProfileId = driverProfileReqDto.TgProfileId,
@@ -51,6 +61,29 @@ namespace NvkInWayWebApi.Application.Services
 
             await repository.AddDriverAsync(newProfile);
             return OperationResult.Success();
+        }
+
+        public async Task<OperationResult> DeleteDriverCars(long profileId, List<Guid> carIds)
+        {
+            return await repository.DeleteDriverCarsAsync(profileId, carIds);
+        }
+
+        public async Task<OperationResult> AddDriverCars(long profileId, List<CarReqDto> listCarReqDtos)
+        {
+            var cars = listCarReqDtos
+                .Select(c => CarReqDto.MapFrom(c))
+                .ToList();
+
+            return await repository.AddDriverCarsAsync(profileId, cars);
+        }
+
+        public async Task<OperationResult> UpdateDriverCars(long profileId, List<DetailedСarReqDto> listDetailedCars)
+        {
+            var cars = listDetailedCars
+                .Select(c => DetailedСarReqDto.MapFrom(c))
+                .ToList();
+
+            return await repository.UpdateDriverCarsAsync(profileId, cars);
         }
     }
 }

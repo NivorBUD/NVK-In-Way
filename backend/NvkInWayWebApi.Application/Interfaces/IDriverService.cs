@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using NvkInWayWebApi.Domain;
+using NvkInWayWebApi.Domain.Models;
 
 namespace NvkInWayWebApi.Application.Interfaces
 {
@@ -13,6 +14,14 @@ namespace NvkInWayWebApi.Application.Interfaces
     {
         public Task<OperationResult<DriverProfileResDto>> GetDriverProfileByIdAsync(long profileId);
 
+        public Task<OperationResult> DeleteDriverProfileByIdAsync(long profileId);
+
         public Task<OperationResult> AddDriverProfileAsync(DriverProfileReqDto driverProfileReqDto);
+
+        public Task<OperationResult> DeleteDriverCars(long profileId, List<Guid> carIds);
+
+        public Task<OperationResult> AddDriverCars(long profileId, List<CarReqDto> cars);
+
+        public Task<OperationResult> UpdateDriverCars(long profileId, List<DetailedСarReqDto> cars);
     }
 }

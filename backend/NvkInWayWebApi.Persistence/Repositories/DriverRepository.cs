@@ -23,13 +23,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return OperationResult.Success(201);
         }
 
-        public async Task<OperationResult> UpdateDriverAsync(DriverProfile driver)
-        {
-            Update(MapFrom(driver));
-            await SaveChangesAsync();
-            return OperationResult.Success(201);
-        }
-
         public async Task<OperationResult> DeleteDriverAsync(long profileId)
         {
             var driver = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
@@ -54,6 +47,89 @@ namespace NvkInWayWebApi.Persistence.Repositories
             var profile = MapFrom(dbEntity);
 
             return OperationResult<DriverProfile>.Success(profile);
+        }
+
+        public async Task<OperationResult> UpdateDriverCarsAsync(long driverId, List<Car> cars)
+        {
+            var dbEntity = await _context.Set<DriverEntity>()
+                .Include(d => d.Cars)
+                .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
+
+            foreach (var car in cars)
+            {
+                if(!dbEntity.Cars.Any(c => c.Id == car.Id))
+                    return OperationResult<DriverProfile>.Error("У пользователя не существует какой-либо из переданных машин");
+            }
+            
+            Update(dbEntity);
+            SaveChangesAsync();
+
+            return OperationResult.Success(204);
+        }
+
+        public async Task<OperationResult> AddDriverCarsAsync(long driverId, List<Car> cars)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            var dbEntity = await _context.Set<DriverEntity>()
+                .Include(d => d.Cars)
+                .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
+
+            if (dbEntity == null)
+                return OperationResult.Error("Водитель не найден");
+
+            if (cars == null || !cars.Any())
+                return OperationResult.Error("Список машин не может быть пустым");
+
+            foreach (var car in cars)
+            {
+                if (dbEntity.Cars.Any(c => c.Id == car.Id))
+                    return OperationResult.Error($"У пользователя уже существует машина с таким id = {car.Id}");
+            }
+
+            foreach (var car in cars)
+            {
+                dbEntity.Cars.Add(new CarEntity()
+                {
+                    Id = Guid.NewGuid(),
+                    DriverId = dbEntity.Id,
+                    Driver = dbEntity,
+                    Color = car.Color,
+                    Name = car.Name,
+                    Number = car.Number
+                });
+            }
+
+            await _context.SaveChangesAsync();
+
+            return OperationResult.Success(204);
+        }
+
+
+        public async Task<OperationResult> DeleteDriverCarsAsync(long driverId, List<Guid> carsIds)
+        {
+            var dbEntity = await _context.Set<DriverEntity>()
+                .Include(d => d.Cars)
+                .FirstOrDefaultAsync(d => d.TgProfileId == driverId);
+
+            if (dbEntity == null)
+                return OperationResult.Error("Водитель не найден");
+
+            foreach (var carId in carsIds)
+            {
+                if (!dbEntity.Cars.Any(c => c.Id == carId))
+                    return OperationResult.Error("У пользователя не существует какой-либо из переданных машин");
+            }
+
+            foreach (var carId in carsIds)
+            {
+                var carToRemove = dbEntity.Cars.FirstOrDefault(c => c.Id == carId);
+                dbEntity.Cars.Remove(carToRemove);
+            }
+
+            await _context.SaveChangesAsync();
+
+            return OperationResult.Success(204);
         }
 
         public DriverEntity MapFrom(DriverProfile profile)
