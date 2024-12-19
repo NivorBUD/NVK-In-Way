@@ -7,11 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\" />
-    <Folder Include="Services\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\NvkInWayWebApi.Domain\NvkInWayWebApi.Domain.csproj" />
     <ProjectReference Include="..\NvkInWayWebApi.Persistence\NvkInWayWebApi.Persistence.csproj" />
   </ItemGroup>

@@ -13,8 +13,8 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
 
         public Task UpdateDriverAsync(DriverProfile driver);
 
-        public Task DeleteDriverAsync(Guid id);
+        public Task DeleteDriverAsync(long profileId);
 
-        public Task GetDriverProfileById(Guid id);
+        public Task<DriverProfile> GetDriverProfileByIdAsync(long profileId);
     }
 }

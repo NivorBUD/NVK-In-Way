@@ -3,6 +3,8 @@ using Asp.Versioning;
 using Microsoft.OpenApi.Models;
 using NvkInWayWebApi.ForSwagger;
 using System.Reflection;
+using NvkInWayWebApi.Application;
+using NvkInWayWebApi.Persistence;
 
 namespace NvkInWayWebApi
 {
@@ -12,7 +14,10 @@ namespace NvkInWayWebApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            var configuration = builder.Configuration;
             // Add services to the container.
+            builder.Services.AddDataAccess(configuration);
+            builder.Services.AddApplication();
 
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

@@ -27,14 +27,24 @@ namespace NvkInWayWebApi.Persistence.Repositories
             await SaveChangesAsync();
         }
 
-        public async Task DeleteDriverAsync(Guid id)
+        public async Task DeleteDriverAsync(long profileId)
         {
-            var driver = await GetByIdAsync(id);
+            var driver = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
             if (driver != null)
             {
                 Delete(driver);
                 await SaveChangesAsync();
             }
+        }
+
+        public async Task<DriverProfile> GetDriverProfileByIdAsync(long profileId)
+        {
+            var dbEntity = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
+
+            if (dbEntity == null)
+                return null;
+
+            return MapFrom(dbEntity);
         }
 
         public DriverEntity MapFrom(DriverProfile profile)

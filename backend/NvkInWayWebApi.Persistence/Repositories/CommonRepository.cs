@@ -6,7 +6,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
     public class CommonRepository<T> : IRepository<T> where T : class
     {
         protected readonly DbContext _context;
-        private readonly DbSet<T> _dbSet;
+        protected readonly DbSet<T> _dbSet;
 
         public CommonRepository(DbContext context)
         {

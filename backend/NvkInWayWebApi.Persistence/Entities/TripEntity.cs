@@ -5,15 +5,15 @@ namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class TripEntity
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
-    public string DriverId { get; set; } = null!;
+    public Guid DriverId { get; set; }
 
-    public string CarId { get; set; } = null!;
+    public Guid CarId { get; set; }
 
-    public string StartPoint { get; set; } = null!;
+    public Guid StartPoint { get; set; }
 
-    public string EndPoint { get; set; } = null!;
+    public Guid EndPoint { get; set; }
 
     public DateOnly? DriveStartTime { get; set; }
 

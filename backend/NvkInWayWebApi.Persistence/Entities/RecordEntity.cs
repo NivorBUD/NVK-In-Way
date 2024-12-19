@@ -5,13 +5,13 @@ namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class RecordEntity
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
-    public string DriverId { get; set; } = null!;
+    public Guid DriverId { get; set; }
 
-    public string TripId { get; set; } = null!;
+    public Guid TripId { get; set; }
 
-    public string PassengerId { get; set; } = null!;
+    public Guid PassengerId { get; set; }
 
     public virtual DriverEntity Driver { get; set; } = null!;
 

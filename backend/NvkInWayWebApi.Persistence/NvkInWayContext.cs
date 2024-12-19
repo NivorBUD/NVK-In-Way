@@ -12,6 +12,7 @@ public partial class NvkInWayContext : DbContext
     public NvkInWayContext(DbContextOptions<NvkInWayContext> options)
         : base(options)
     {
+        Database.EnsureCreated();
     }
 
     public virtual DbSet<CarEntity> Cars { get; set; }
@@ -30,7 +31,7 @@ public partial class NvkInWayContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=nvk_in_way;Username=nvk_in_way;Password=nvkthebest");
+        => optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Database=nvk_in_way;Username=postgres;Password=root");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -40,9 +41,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("cars");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.Color)
                 .HasMaxLength(20)
                 .HasColumnName("color");
@@ -68,9 +69,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("drivers");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.AllTripsCount).HasColumnName("all_trips_count");
             entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
@@ -82,9 +83,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("locations");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.Coordinate).HasColumnName("coordinate");
             entity.Property(e => e.Description).HasColumnName("description");
         });
@@ -95,9 +96,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("passengers");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
             entity.Property(e => e.TripCount).HasColumnName("trip_count");
@@ -109,9 +110,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("records");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.DriverId)
                 .HasMaxLength(40)
                 .HasColumnName("driver_id");
@@ -144,9 +145,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("taxis");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.CountPlaces).HasColumnName("count_places");
             entity.Property(e => e.DriveEndTime).HasColumnName("drive_end_time");
             entity.Property(e => e.DriveStartTime).HasColumnName("drive_start_time");
@@ -174,9 +175,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("trips");
 
-            entity.Property(e => e.Id)
-                .HasMaxLength(40)
-                .HasColumnName("id");
+            //entity.Property(e => e.Id)
+            //    .HasMaxLength(40)
+            //    .HasColumnName("id");
             entity.Property(e => e.BookedPlaces).HasColumnName("booked_places");
             entity.Property(e => e.CarId)
                 .HasMaxLength(40)

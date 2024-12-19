@@ -5,11 +5,11 @@ namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class TaxisEntity
 {
-    public string Id { get; set; } = null!;
+    public Guid Id { get; set; }
 
-    public string StartPoint { get; set; } = null!;
+    public Guid StartPoint { get; set; }
 
-    public string EndPoint { get; set; } = null!;
+    public Guid EndPoint { get; set; }
 
     public DateOnly? DriveStartTime { get; set; }
 

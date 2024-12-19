@@ -1,8 +1,10 @@
 ﻿using System.Net;
 using Asp.Versioning;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+using NvkInWayWebApi.Application.Interfaces;
 
 namespace NvkInWayWebApi.Controllers
 {
@@ -11,6 +13,13 @@ namespace NvkInWayWebApi.Controllers
     [ApiVersion("1.0")]
     public class DriverController : ControllerBase
     {
+        private readonly IDriverService service;
+
+        public DriverController(IDriverService service)
+        {
+            this.service = service;
+        }
+        
         /// <summary>
         /// Gets the driver's profile by the telegram user ID
         /// </summary>
@@ -18,10 +27,25 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpGet("get-profile/{profileId}")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(DriverProfileResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<DriverProfileResDto>> GetDriverProfileById(long profileId)
         {
-            throw new NotImplementedException();
+            var result = await service.GetDriverProfileByIdAsync(profileId);
+            return Ok(result);
+        }
+
+        [HttpPost("create-profile")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public async Task<ActionResult> CreateDirverProfile([FromBody] DriverProfileReqDto driverProfileReq)
+        {
+            var profileExsist = await service.GetDriverProfileByIdAsync(driverProfileReq.TgProfileId);
+            if (profileExsist != null)
+                return BadRequest("Профиль уже существует");
+
+            service.AddDriverProfileAsync(driverProfileReq);
+
+            return Created();
         }
 
         /// <summary>
@@ -44,7 +68,7 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpGet("get-active-trip/{profileId}")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(DriverProfileResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long profileId)
         {
             throw new NotImplementedException();
@@ -57,7 +81,7 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpGet("get-trip-passengers/{tripId}")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(DriverProfileResDto), (int)HttpStatusCode.OK)]
+        [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<PassengerShortResDto>> GetShortInfoTripPassengers(Guid tripId)
         {
             throw new NotImplementedException();
