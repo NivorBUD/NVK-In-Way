@@ -5,13 +5,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using NvkInWayWebApi.Domain;
 
 namespace NvkInWayWebApi.Application.Interfaces
 {
     public interface IDriverService
     {
-        public Task<DriverProfileResDto> GetDriverProfileByIdAsync(long profileId);
+        public Task<OperationResult<DriverProfileResDto>> GetDriverProfileByIdAsync(long profileId);
 
-        public Task AddDriverProfileAsync(DriverProfileReqDto driverProfileReqDto);
+        public Task<OperationResult> AddDriverProfileAsync(DriverProfileReqDto driverProfileReqDto);
     }
 }

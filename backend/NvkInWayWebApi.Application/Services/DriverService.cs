@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
+using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
 using NvkInWayWebApi.Domain.Models.Profiles;
 using NvkInWayWebApi.Domain.RepositoriesContract;
@@ -23,17 +24,19 @@ namespace NvkInWayWebApi.Application.Services
             repository = driverRepository;
         }
 
-        public async Task<DriverProfileResDto> GetDriverProfileByIdAsync(long profileId)
+        public async Task<OperationResult<DriverProfileResDto>> GetDriverProfileByIdAsync(long profileId)
         {
-            var driverProfile = await repository.GetDriverProfileByIdAsync(profileId);
+            var driverProfileResult = await repository.GetDriverProfileByIdAsync(profileId);
 
-            if (driverProfile == null)
-                return null;
+            if (!driverProfileResult.IsSuccess)
+                return OperationResult<DriverProfileResDto>.Error(driverProfileResult.ErrorText);
 
-            return DriverProfileResDto.MapFrom(driverProfile);
+            var resDto = DriverProfileResDto.MapFrom(driverProfileResult.Data);
+
+            return OperationResult<DriverProfileResDto>.Success(resDto);
         }
 
-        public async Task AddDriverProfileAsync(DriverProfileReqDto driverProfileReqDto)
+        public async Task<OperationResult> AddDriverProfileAsync(DriverProfileReqDto driverProfileReqDto)
         {
             var newProfile = new DriverProfile()
             {
@@ -49,6 +52,7 @@ namespace NvkInWayWebApi.Application.Services
             };
 
             await repository.AddDriverAsync(newProfile);
+            return OperationResult.Success();
         }
     }
 }

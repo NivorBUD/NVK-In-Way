@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
 using NvkInWayWebApi.Domain.Models.Profiles;
 using NvkInWayWebApi.Domain.RepositoriesContract;
@@ -15,36 +16,44 @@ namespace NvkInWayWebApi.Persistence.Repositories
     {
         public DriverRepository(DbContext context) : base(context) { }
 
-        public async Task AddDriverAsync(DriverProfile driver)
+        public async Task<OperationResult> AddDriverAsync(DriverProfile driver)
         {
             await AddAsync(MapFrom(driver));
             await SaveChangesAsync();
+            return OperationResult.Success(201);
         }
 
-        public async Task UpdateDriverAsync(DriverProfile driver)
+        public async Task<OperationResult> UpdateDriverAsync(DriverProfile driver)
         {
             Update(MapFrom(driver));
             await SaveChangesAsync();
+            return OperationResult.Success(201);
         }
 
-        public async Task DeleteDriverAsync(long profileId)
+        public async Task<OperationResult> DeleteDriverAsync(long profileId)
         {
             var driver = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
             if (driver != null)
             {
                 Delete(driver);
                 await SaveChangesAsync();
+                return OperationResult.Success(204);
             }
+            return OperationResult.Error("Профиль для удаления не обнаружен");
         }
 
-        public async Task<DriverProfile> GetDriverProfileByIdAsync(long profileId)
+        public async Task<OperationResult<DriverProfile>> GetDriverProfileByIdAsync(long profileId)
         {
-            var dbEntity = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
+            var dbEntity = await _context.Set<DriverEntity>()
+                .Include(d => d.Cars)
+                .FirstOrDefaultAsync(d => d.TgProfileId == profileId);
 
             if (dbEntity == null)
-                return null;
+                return OperationResult<DriverProfile>.Error("Пользователь с таким профилем не найден");
 
-            return MapFrom(dbEntity);
+            var profile = MapFrom(dbEntity);
+
+            return OperationResult<DriverProfile>.Success(profile);
         }
 
         public DriverEntity MapFrom(DriverProfile profile)

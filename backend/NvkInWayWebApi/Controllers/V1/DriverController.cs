@@ -31,7 +31,11 @@ namespace NvkInWayWebApi.Controllers
         public async Task<ActionResult<DriverProfileResDto>> GetDriverProfileById(long profileId)
         {
             var result = await service.GetDriverProfileByIdAsync(profileId);
-            return Ok(result);
+
+            if(!result.IsSuccess)
+                return BadRequest(result.ErrorText);
+                
+            return Ok(result.Data);
         }
 
         [HttpPost("create-profile")]
@@ -40,10 +44,14 @@ namespace NvkInWayWebApi.Controllers
         public async Task<ActionResult> CreateDirverProfile([FromBody] DriverProfileReqDto driverProfileReq)
         {
             var profileExsist = await service.GetDriverProfileByIdAsync(driverProfileReq.TgProfileId);
-            if (profileExsist != null)
+
+            if (profileExsist.IsSuccess)
                 return BadRequest("Профиль уже существует");
 
-            service.AddDriverProfileAsync(driverProfileReq);
+            var addResult = await service.AddDriverProfileAsync(driverProfileReq);
+
+            if (!addResult.IsSuccess)
+                return BadRequest(addResult.ErrorText);
 
             return Created();
         }
