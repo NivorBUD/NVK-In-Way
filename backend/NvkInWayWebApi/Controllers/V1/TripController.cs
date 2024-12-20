@@ -47,11 +47,6 @@ namespace NvkInWayWebApi.Controllers.V1
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateTrip([FromBody] CreateTripReqDto createReqDto)
         {
-            // Добавить id водителя в req dto
-            //var tripExsist = await service.GetTripsByDriverIdAsync(createReqDto)
-            //if (tripExsist.IsSuccess)
-            //    return BadRequest("Поездка уже существует");
-
             var addResult = await service.AddDriverTripAsync(createReqDto);
 
             if (!addResult.IsSuccess)
@@ -70,8 +65,12 @@ namespace NvkInWayWebApi.Controllers.V1
         [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<PassengerShortResDto>> GetShortInfoTripPassengers(Guid tripId)
         {
-            // Добавить пассажиров в бд
-            throw new NotImplementedException();
+            var result = await service.GetTripById(tripId);
+
+            if (!result.IsSuccess)
+                return BadRequest(result.ErrorText);
+
+            return Ok(result.Data);
         }
     }
 }

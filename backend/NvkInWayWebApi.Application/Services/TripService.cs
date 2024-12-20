@@ -77,5 +77,17 @@ namespace NvkInWayWebApi.Application.Services
             await repository.UpdateTripAsync(updatedTrip);
             return OperationResult.Success();
         }
+
+        public async Task<OperationResult<GetActiveTripsResDto>> GetTripById(Guid id)
+        {
+            var tripResult = await repository.GetTripByTripIdAsync(id);
+
+            if (!tripResult.IsSuccess)
+                return OperationResult<GetActiveTripsResDto>.Error(tripResult.ErrorText);
+
+            var resDto = GetActiveTripsResDto.MapFrom(tripResult.Data);
+
+            return OperationResult<GetActiveTripsResDto>.Success(resDto);
+        }
     }
 }

@@ -28,6 +28,8 @@ public partial class TripEntity
 
     public int BookedPlaces { get; set; }
 
+    public double Costs { get; set; }
+
     //------------------------------------------------
 
     public virtual CarEntity Car { get; set; } = null!;
@@ -53,6 +55,7 @@ public partial class TripEntity
             DriveStartTime = trip.StartTime,
             DriveEndTime = trip.EndTime,
             TotalPlaces = trip.TotalPlaces,
+            Costs = trip.Cost,
             BookedPlaces = trip.BookedPlaces
         };
     }
@@ -71,7 +74,8 @@ public partial class TripEntity
             StartTime = trip.DriveStartTime,
             EndTime = trip.DriveEndTime,
             TotalPlaces = trip.TotalPlaces,
-            BookedPlaces = trip.BookedPlaces
+            BookedPlaces = trip.BookedPlaces,
+            Cost = trip.Costs
         };
     }
 }

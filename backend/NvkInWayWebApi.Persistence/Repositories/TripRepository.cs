@@ -31,15 +31,29 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return OperationResult.Error("Поездка для удаления не обнаружен");
         }
 
-        public async Task<OperationResult<Trip>> GetAllTripsAsync()
+        public async Task<OperationResult<Trip>> GetTripByTripIdAsync(Guid tripId)
         {
-            await GetAllAsync();
-            return OperationResult<Trip>.Success();
+            var dbTrip = await _dbSet
+                    .Include(d => d.Driver)
+                    .Include(t => t.Car)
+                    .Include(p => p.StartPointNavigation)
+                    .Include(p => p.EndPointNavigation)
+                    .Include(t => t.Records)
+                    .FirstOrDefaultAsync(t => t.Id == tripId)
+                ;
+
+            if(dbTrip == null)
+                return OperationResult<Trip>.Error("Поездка с таким идентификатором не была обнаружена");
+
+            var trip = TripEntity.MapFrom(dbTrip);
+
+            return OperationResult<Trip>.Success(trip);
         }
 
         public async Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId)
         {
             var tripEntities = await _context.Set<TripEntity>()
+                .Include(d => d.Driver)
                 .Include(t => t.Car)
                 .Include(p => p.StartPointNavigation)
                 .Include(p => p.EndPointNavigation)
@@ -62,6 +76,10 @@ namespace NvkInWayWebApi.Persistence.Repositories
         public async Task<OperationResult<List<Trip>>> GetTripsByCarIdAsync(Guid carId)
         {
             var tripEntities = await _context.Set<TripEntity>()
+                .Include(d => d.Driver)
+                .Include(t => t.Car)
+                .Include(t => t.StartPointNavigation)
+                .Include(t => t.EndPointNavigation)
                 .Include(t => t.Records)
                 .Where(t => t.Car.Id == carId).ToListAsync();
 

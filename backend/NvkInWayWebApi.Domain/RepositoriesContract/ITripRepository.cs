@@ -8,7 +8,7 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
 
         public Task<OperationResult<List<Trip>>> GetTripsByCarIdAsync(Guid carId);
 
-        public Task<OperationResult<Trip>> GetAllTripsAsync();
+        public Task<OperationResult<Trip>> GetTripByTripIdAsync(Guid tripId);
 
         public Task<OperationResult> AddTripAsync(Trip trip);
 
