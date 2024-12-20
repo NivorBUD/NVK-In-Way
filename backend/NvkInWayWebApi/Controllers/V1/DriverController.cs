@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
 using System.Net;

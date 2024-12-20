@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos
+namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos
 {
     public class CarReqDto
     {

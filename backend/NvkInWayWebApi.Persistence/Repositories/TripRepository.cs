@@ -41,7 +41,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             var tripEntities = await _context.Set<TripEntity>()
                 .Include(t => t.Records)
-                .Where(t => t.DriverId == driverId).ToListAsync();
+                .Where(t => t.Driver.TgProfileId == driverId).ToListAsync();
 
             if (tripEntities == null)
                 return OperationResult<List<Trip>>.Error("Поездки не найдены");
@@ -60,7 +60,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             var tripEntities = await _context.Set<TripEntity>()
                 .Include(t => t.Records)
-                .Where(t => t.CarId == carId).ToListAsync();
+                .Where(t => t.Car.Id == carId).ToListAsync();
 
             if (tripEntities == null)
                 return OperationResult<List<Trip>>.Error("Поездки не найдены");

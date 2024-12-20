@@ -21,6 +21,7 @@ namespace NvkInWayWebApi.Persistence
 
             services.AddScoped<IDriverRepository, DriverRepository>();
             services.AddScoped<IPassengerRepository, PassengerRepository>();
+            services.AddScoped<ITripRepository, TripRepository>();
 
             return services;
         }

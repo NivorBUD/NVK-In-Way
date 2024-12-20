@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using FluentValidation;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 
 namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtoValidators
 {

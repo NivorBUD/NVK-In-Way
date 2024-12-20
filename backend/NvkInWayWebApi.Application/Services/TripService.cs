@@ -1,5 +1,6 @@
-﻿using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+﻿using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
+
 using NvkInWayWebApi.Application.Interfaces;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
@@ -18,17 +19,17 @@ namespace NvkInWayWebApi.Application.Services
 
         public async Task<OperationResult> AddDriverTripAsync(CreateTripReqDto tripReqDto)
         {
-            // Добавить преобразование из dto в модель
+            // Добавить преобразование из dto в модель(cделано)
             var newTrip = new Trip()
             {
-                //StartPoint = tripReqDto.StartPoint,
-                //EndPoint = tripReqDto.EndPoint,
+                StartPoint = LocationReqDto.MapFrom(tripReqDto.StartPoint),
+                EndPoint = LocationReqDto.MapFrom(tripReqDto.EndPoint),
                 StartTime = tripReqDto.DriveStartTime,
                 EndTime = tripReqDto.DriveEndTime,
                 TotalPlaces = tripReqDto.TotalPlaces,
                 Cost = tripReqDto.TripCost,
-                //CarLocation = tripReqDto.CarLocation,
-                //DriverCar = tripReqDto.TripCar
+                CarLocation = tripReqDto.CarLocation,
+                DriverCar = OnlyCarIdsReqDto.MapFrom(tripReqDto.TripCar),
             };
 
             await repository.AddTripAsync(newTrip);
@@ -42,17 +43,19 @@ namespace NvkInWayWebApi.Application.Services
         }
 
         // Добавить обработку списка трипов
-        public async Task<OperationResult<GetActiveTripsResDto>> GetTripsByDriverIdAsync(long driverId)
+        public async Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByDriverIdAsync(long driverId)
         {
             var tripResult = await repository.GetTripsByDriverIdAsync(driverId);
 
             if (!tripResult.IsSuccess)
-                return OperationResult<GetActiveTripsResDto>.Error(tripResult.ErrorText);
+                return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
 
             // Добавить преобразование
-            //var resDto = GetActiveTripsResDto.MapFrom(tripResult.Data);
+            var resDto = tripResult.Data
+                .Select(t => GetActiveTripsResDto.MapFrom(t))
+                .ToList();
 
-            return OperationResult<GetActiveTripsResDto>.Success();
+            return OperationResult<List<GetActiveTripsResDto>>.Success(resDto);
         }
 
         public async Task<OperationResult> UpdateDriverTripAsync(CreateTripReqDto tripReqDto)
@@ -60,14 +63,14 @@ namespace NvkInWayWebApi.Application.Services
             // Добавить преобразование из dto в модель, если еще нет
             var updatedTrip = new Trip()
             {
-                //StartPoint = tripReqDto.StartPoint,
-                //EndPoint = tripReqDto.EndPoint,
+                StartPoint = LocationReqDto.MapFrom(tripReqDto.StartPoint),
+                EndPoint = LocationReqDto.MapFrom(tripReqDto.EndPoint),
                 StartTime = tripReqDto.DriveStartTime,
                 EndTime = tripReqDto.DriveEndTime,
                 TotalPlaces = tripReqDto.TotalPlaces,
                 Cost = tripReqDto.TripCost,
-                //CarLocation = tripReqDto.CarLocation,
-                //DriverCar = tripReqDto.TripCar
+                CarLocation = tripReqDto.CarLocation,
+                DriverCar = OnlyCarIdsReqDto.MapFrom(tripReqDto.TripCar),
             };
 
             await repository.UpdateTripAsync(updatedTrip);

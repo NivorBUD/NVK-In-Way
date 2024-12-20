@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 
 namespace NvkInWayWebApi.Application.Interfaces
 {

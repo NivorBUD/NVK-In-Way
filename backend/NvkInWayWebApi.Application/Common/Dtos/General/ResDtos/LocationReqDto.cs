@@ -12,5 +12,10 @@ namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos
         public string TextDescription { get; set; }
 
         public Coordinate Coordinate { get; set; }
+
+        public static Location MapFrom(LocationReqDto resDto)
+        {
+            return new Location(resDto.TextDescription, resDto.Coordinate);
+        }
     }
 }

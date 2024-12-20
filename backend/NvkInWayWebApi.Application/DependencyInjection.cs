@@ -18,6 +18,8 @@ namespace NvkInWayWebApi.Application
 
             services.AddScoped<IPassengerService, PassengerService>();
 
+            services.AddScoped<ITripService, TripService>();
+
             return services;
         }
 

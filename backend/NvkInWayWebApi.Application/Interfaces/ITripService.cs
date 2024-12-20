@@ -1,12 +1,11 @@
-﻿using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+﻿using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
 using NvkInWayWebApi.Domain;
 
 namespace NvkInWayWebApi.Application.Interfaces
 {
     public interface ITripService
     {
-        public Task<OperationResult<GetActiveTripsResDto>> GetTripsByDriverIdAsync(long driverId);
+        public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByDriverIdAsync(long driverId);
 
         public Task<OperationResult> AddDriverTripAsync(CreateTripReqDto tripReqDto);
 

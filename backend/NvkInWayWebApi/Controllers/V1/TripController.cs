@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
+using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
@@ -24,7 +24,7 @@ namespace NvkInWayWebApi.Controllers.V1
         /// </summary>
         /// <param name="profileId">telegram user ID</param>
         /// <returns></returns>
-        [HttpGet("get-trips/{driverId}")]
+        [HttpGet("get-driver-trips/{driverId}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId)
@@ -42,7 +42,7 @@ namespace NvkInWayWebApi.Controllers.V1
         /// </summary>
         /// <param name="createReqDto">Trip data</param>
         /// <returns></returns>
-        [HttpPost("create-profile")]
+        [HttpPost("create-trip")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
         public async Task<ActionResult> CreateTrip([FromBody] CreateTripReqDto createReqDto)

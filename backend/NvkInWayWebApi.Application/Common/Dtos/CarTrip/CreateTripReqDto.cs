@@ -1,7 +1,7 @@
 ﻿using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos
+namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip
 {
     public class CreateTripReqDto
     {
@@ -17,8 +17,8 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos
 
         public double TripCost { get; set; }
 
-        public LocationReqDto CarLocation { get; set; }
+        public string CarLocation { get; set; }
 
-        public CarResDto TripCar { get; set; }
+        public OnlyCarIdsReqDto TripCar { get; set; }
     }
 }

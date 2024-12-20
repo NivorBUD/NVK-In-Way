@@ -1,4 +1,5 @@
 ﻿using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Domain.Models.Profiles;
 using System;
 using System.Collections.Generic;

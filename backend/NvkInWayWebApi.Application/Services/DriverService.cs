@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Interfaces;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;

@@ -85,6 +85,7 @@ public partial class NvkInWayContext : DbContext
             entity.ToTable("passengers");
 
             entity.Property(e => e.Rating).HasColumnName("rating");
+            
             entity.Property(e => e.TripCount).HasColumnName("trip_count");
         });
 
@@ -192,27 +193,29 @@ public partial class NvkInWayContext : DbContext
                 .HasColumnName("booked_places")
                 .IsRequired(); // Обязательно
 
+            //Тут собака зарыта
+
             // Настройка отношений с другими сущностями
             entity.HasOne(d => d.Car)
-                .WithMany() // Предполагается, что у Car нет навигационного свойства для поездок
+                .WithMany(c => c.Trips) // Предполагается, что у Car нет навигационного свойства для поездок
                 .HasForeignKey(d => d.CarId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_car");
 
             entity.HasOne(d => d.Driver)
-                .WithMany() // Предполагается, что у Driver нет навигационного свойства для поездок
+                .WithMany(c => c.Trips) // Предполагается, что у Driver нет навигационного свойства для поездок
                 .HasForeignKey(d => d.DriverId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_driver");
 
             entity.HasOne(d => d.StartPointNavigation)
-                .WithMany() // Предполагается, что у Location нет навигационного свойства для поездок
+                .WithMany(c => c.TripStartPointNavigations) // Предполагается, что у Location нет навигационного свойства для поездок
                 .HasForeignKey(d => d.StartPointId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_start_point");
 
             entity.HasOne(d => d.EndPointNavigation)
-                .WithMany() // Предполагается, что у Location нет навигационного свойства для поездок
+                .WithMany(c => c.TripEndPointNavigations) // Предполагается, что у Location нет навигационного свойства для поездок
                 .HasForeignKey(d => d.EndPointId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_end_point");
