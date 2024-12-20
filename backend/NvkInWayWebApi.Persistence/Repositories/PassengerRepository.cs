@@ -35,7 +35,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             // Получаем существующего пассажира
             var existingPassenger = await _dbSet
-                // Не отслеживаем существующий объект
+                // Не отслеживаем существующий объектd
                 .FirstOrDefaultAsync(p => p.TgProfileId == passenger.TgProfileId);
 
             if (existingPassenger == null)

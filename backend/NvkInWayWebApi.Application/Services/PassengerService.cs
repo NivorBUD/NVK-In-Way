@@ -35,14 +35,12 @@ namespace NvkInWayWebApi.Application.Services
                 TgProfileId = passengerProfileReqDto.TgProfileId
             };
 
-            await repository.AddPassengerAsync(newProfile);
-            return OperationResult.Success();
+            return await repository.AddPassengerAsync(newProfile);
         }
 
         public async Task<OperationResult> DeletePassengerProfileAsync(long profileId)
         {
-            await repository.DeletePassengerAsync(profileId);
-            return OperationResult.Success();
+            return await repository.DeletePassengerAsync(profileId); ;
         }
 
         public async Task<OperationResult> UpdatePassengerProfileAsync(PassengerFullProfileReqDto passengerFullProfileReqDto)
@@ -54,8 +52,7 @@ namespace NvkInWayWebApi.Application.Services
                 TgProfileId = passengerFullProfileReqDto.TgProfileId
             };
 
-            await repository.UpdatePassengerAsync(updatedProfile);
-            return OperationResult.Success();
+            return await repository.UpdatePassengerAsync(updatedProfile);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
@@ -26,12 +27,13 @@ namespace NvkInWayWebApi.Controllers.V1
         [HttpGet("get-passenger-profile/{profileId}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(PassengerShortResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PassengerShortResDto>> GetPassengerProfileById(long profileId)
         {
             var result = await service.GetPassengerProfileByIdAsync(profileId);
 
             if (!result.IsSuccess)
-                return BadRequest(result.ErrorText);
+                return BadRequest(new MyResponseMessage(result.ErrorText));
 
             return Ok(result.Data);
         }
@@ -39,6 +41,7 @@ namespace NvkInWayWebApi.Controllers.V1
         [HttpPost("create-passenger-profile")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreatePassengerProfile([FromBody] PassengerShortProfileReqDto passengerProfileReq)
         {
             var profileExsist = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
@@ -49,40 +52,42 @@ namespace NvkInWayWebApi.Controllers.V1
             var addResult = await service.AddPassengerProfileAsync(passengerProfileReq);
 
             if (!addResult.IsSuccess)
-                return BadRequest(addResult.ErrorText);
+                return BadRequest(new MyResponseMessage(addResult.ErrorText));
 
             return Created();
         }
 
         [HttpDelete("delete-passenger-profile")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeletePassengerProfile([FromBody] PassengerShortProfileReqDto passengerProfileReq)
         {
-            var profileExists = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
+            //var profileExists = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
 
-            if (profileExists.IsSuccess)
-                await service.DeletePassengerProfileAsync(passengerProfileReq.TgProfileId);
+            //if (!profileExists.IsSuccess)
+            //    return BadRequest(new MyResponseMessage(profileExists.ErrorText));
 
-            return Ok();
+            var deleteResult = await service.DeletePassengerProfileAsync(passengerProfileReq.TgProfileId);
+
+            if (!deleteResult.IsSuccess)
+                return BadRequest(new MyResponseMessage(deleteResult.ErrorText));
+
+            return NoContent();
         }
 
         [HttpPatch("update-passenger-rating")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdatePassengerRating([FromBody] PassengerFullProfileReqDto passengerProfileReq)
         {
-            var profileExsist = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
+            var updateResult = await service.UpdatePassengerProfileAsync(passengerProfileReq);
 
-            if (profileExsist.IsSuccess)
-            {
-                var updateResult = await service.UpdatePassengerProfileAsync(passengerProfileReq);
+            if (!updateResult.IsSuccess)
+                return BadRequest(new MyResponseMessage(updateResult.ErrorText));
 
-                if (!updateResult.IsSuccess)
-                    return BadRequest(updateResult.ErrorText);
-            }
-
-            return Ok();
+            return Created();
         }
     }
 }

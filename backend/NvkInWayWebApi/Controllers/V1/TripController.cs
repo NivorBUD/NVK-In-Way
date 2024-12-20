@@ -1,5 +1,6 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
+using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
@@ -27,12 +28,13 @@ namespace NvkInWayWebApi.Controllers.V1
         [HttpGet("get-driver-trips/{driverId}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId)
         {
             var result = await service.GetTripsByDriverIdAsync(driverId);
 
             if (!result.IsSuccess)
-                return BadRequest(result.ErrorText);
+                return BadRequest(new MyResponseMessage(result.ErrorText));
 
             return Ok(result.Data);
         }
@@ -45,12 +47,13 @@ namespace NvkInWayWebApi.Controllers.V1
         [HttpPost("create-trip")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateTrip([FromBody] CreateTripReqDto createReqDto)
         {
             var addResult = await service.AddDriverTripAsync(createReqDto);
 
             if (!addResult.IsSuccess)
-                return BadRequest(addResult.ErrorText);
+                return BadRequest(new MyResponseMessage(addResult.ErrorText));
 
             return Created();
         }
@@ -63,12 +66,13 @@ namespace NvkInWayWebApi.Controllers.V1
         [HttpGet("get-trip-passengers/{tripId}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<PassengerShortResDto>> GetShortInfoTripPassengers(Guid tripId)
         {
             var result = await service.GetTripById(tripId);
 
             if (!result.IsSuccess)
-                return BadRequest(result.ErrorText);
+                return BadRequest(new MyResponseMessage(result.ErrorText));
 
             return Ok(result.Data);
         }
