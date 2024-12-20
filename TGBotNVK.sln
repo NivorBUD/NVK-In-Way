@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TGBotNVK", "TGBotNVK\TGBotNVK.csproj", "{48B87476-EE54-4988-A892-AA6A7C6E642E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TGBotNVK", "TGBotNVK.csproj", "{9E577268-4BA7-4963-B98F-B1C169AEE309}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{48B87476-EE54-4988-A892-AA6A7C6E642E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{48B87476-EE54-4988-A892-AA6A7C6E642E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{48B87476-EE54-4988-A892-AA6A7C6E642E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{48B87476-EE54-4988-A892-AA6A7C6E642E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E577268-4BA7-4963-B98F-B1C169AEE309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E577268-4BA7-4963-B98F-B1C169AEE309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E577268-4BA7-4963-B98F-B1C169AEE309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E577268-4BA7-4963-B98F-B1C169AEE309}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D5A95736-2021-41C0-B2ED-5FD7C900E8A2}
+		SolutionGuid = {A52CE4BF-1F0E-48C4-B9AD-45F5E30859AD}
 	EndGlobalSection
 EndGlobal

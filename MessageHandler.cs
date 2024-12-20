@@ -45,12 +45,12 @@ public static class MessageHandler
             {
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Водитель", "driver_button"), 
-                    InlineKeyboardButton.WithCallbackData("Пассажир", "pas_button"), 
+                    InlineKeyboardButton.WithCallbackData("Водитель", "driver_button"),
+                    InlineKeyboardButton.WithCallbackData("Пассажир", "pas_button"),
                 },
             });
-                                
-        await botClient.SendTextMessageAsync(chat.Id, "Кто вы", replyMarkup: inlineKeyboard);
+
+        await botClient.SendMessage(chat.Id, "Кто вы", replyMarkup: inlineKeyboard);
     }
 
     public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat, long userId)
@@ -60,7 +60,7 @@ public static class MessageHandler
                 {
                     new InlineKeyboardButton[]
                     {
-                        Program.DriversDataBase.ContainsKey(userId) ?
+                        Program.IsDriverIdInDataBase(userId) ?
                             InlineKeyboardButton.WithCallbackData("Редактировать профиль", "change profile") :
                             InlineKeyboardButton.WithCallbackData("Создать профиль", "create profile")
                     },
@@ -86,18 +86,18 @@ public static class MessageHandler
             {
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Посмотреть список активных поездок", "view_active"), 
+                    InlineKeyboardButton.WithCallbackData("Посмотреть список активных поездок", "view_active"),
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Посмотреть карточку", "view_info"), 
+                    InlineKeyboardButton.WithCallbackData("Посмотреть карточку", "view_info"),
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Создание комнаты объединения в таксу", "create_room"), 
+                    InlineKeyboardButton.WithCallbackData("Создание комнаты объединения в таксу", "create_room"),
                 },
             });
-         await botClient.SendTextMessageAsync(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
+        await botClient.SendMessage(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
     }
 
     /*public static async void ViewActiveTrip(ITelegramBotClient botClient, Chat chat)
@@ -168,14 +168,7 @@ public static class MessageHandler
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
                     var trips = ProfileHandler.GetDriverTrips(user.Id);
-                    if (trips != "")
-                    {
-                        await botClient.SendMessage(chat.Id, trips);
-                    }
-                    else
-                    {
-                        await botClient.SendMessage(chat.Id, "У вас нет созданных поездок");
-                    }
+                    await botClient.SendMessage(chat.Id, trips != "" ? trips : "У вас нет созданных поездок");
                     return;
                 }
             case "create trip":
@@ -186,6 +179,8 @@ public static class MessageHandler
                 }
             case "change profile":
                 {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    await PrintStartMenu(botClient, chat);
                     return;
                 }
         }

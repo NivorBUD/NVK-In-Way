@@ -17,11 +17,7 @@ public static class ProfileHandler
 
     public static async void StartCreatingDriverProfile(Message msg, ITelegramBotClient botClient)
     {
-        if (!Program.DriversDataBase.TryGetValue(msg.Chat.Id, out var driver))
-        {
-            driver = new Driver();
-            Program.DriversDataBase[msg.Chat.Id] = driver;
-        }
+        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
 
         if (driver.IsProfileComplete)
         {
@@ -39,11 +35,7 @@ public static class ProfileHandler
 
     public static async void StartChangingDriverProfile(Message msg, ITelegramBotClient botClient)
     {
-        if (!Program.DriversDataBase.TryGetValue(msg.Chat.Id, out var driver))
-        {
-            driver = new Driver();
-            Program.DriversDataBase[msg.Chat.Id] = driver;
-        }
+        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
 
         await botClient.SendMessage(
                         msg.Chat.Id,
@@ -56,17 +48,16 @@ public static class ProfileHandler
     {
         var msg = update.Message;
         var chat = msg.Chat;
-        var driver = Program.DriversDataBase[msg.From.Id];
+        var driver = Program.GetDriverFromDatabse(msg.From.Id);
 
         switch (creatingProfileStep)
         {
             case 0:
                 {
                     driver.SetAutoName(msg.Text);
-                    driver.SetTGId(msg.From.Id);
                     await botClient.SendMessage(
-                        chat.Id, 
-                        "Введите номер авто", 
+                        chat.Id,
+                        "Введите номер авто",
                         cancellationToken: cancellationToken);
                     creatingProfileStep++;
                     return;
@@ -75,8 +66,8 @@ public static class ProfileHandler
                 {
                     driver.SetAutoNumber(msg.Text);
                     await botClient.SendMessage(
-                        chat.Id, 
-                        "Введите цвет авто", 
+                        chat.Id,
+                        "Введите цвет авто",
                         cancellationToken: cancellationToken);
                     creatingProfileStep++;
                     return;
@@ -87,8 +78,8 @@ public static class ProfileHandler
                     Program.isBusy = false;
                     creatingProfileStep = 0;
                     await botClient.SendMessage(
-                        chat.Id, 
-                        driver.ToString(), 
+                        chat.Id,
+                        driver.ToString(),
                         cancellationToken: cancellationToken);
                     Program.StartWithStandardUpdateHandler();
                     await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
@@ -99,18 +90,14 @@ public static class ProfileHandler
 
     public static string GetDriverTrips(long driverTGId)
     {
-        var driver = Program.DriversDataBase[driverTGId];
+        var driver = Program.GetDriverFromDatabse(driverTGId);
 
         return driver.GetTrips();
     }
 
     public static async void CreateTrip(Message msg, ITelegramBotClient botClient)
     {
-        if (!Program.DriversDataBase.TryGetValue(msg.Chat.Id, out var driver))
-        {
-            driver = new Driver();
-            Program.DriversDataBase[msg.Chat.Id] = driver;
-        }
+        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
 
         if (!driver.IsProfileComplete)
         {
@@ -130,8 +117,8 @@ public static class ProfileHandler
     {
         var msg = update.Message;
         var chat = msg.Chat;
-        var driver = Program.DriversDataBase[msg.From.Id];
-        driver.CreatedTrip = driver.CreatedTrip == null ? new Trip(driver) : driver.CreatedTrip;
+        var driver = Program.GetDriverFromDatabse(msg.From.Id);
+        driver.CreatedTrip ??= new Trip(driver);
 
         switch (creatingTripStep)
         {
@@ -204,7 +191,7 @@ public static class ProfileHandler
                     driver.CreatedTrip.Cost = cost;
                     await botClient.SendMessage(
                         chat.Id,
-                        "Опишите располложение автомобиля",
+                        "Опишите расположение автомобиля",
                         cancellationToken: cancellationToken);
                     creatingTripStep++;
                     return;
@@ -212,13 +199,13 @@ public static class ProfileHandler
             case 5:
                 {
                     driver.CreatedTrip.CarPosition = msg.Text;
+                    await botClient.SendMessage(
+                        chat.Id,
+                        driver.CreatedTrip.ToString(),
+                        cancellationToken: cancellationToken);
                     driver.EndCreatingTrip();
                     Program.isBusy = false;
                     creatingTripStep = 0;
-                    await botClient.SendMessage(
-                        chat.Id,
-                        driver.ToString(),
-                        cancellationToken: cancellationToken);
                     Program.StartWithStandardUpdateHandler();
                     await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;

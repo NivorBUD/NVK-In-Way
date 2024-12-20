@@ -24,7 +24,8 @@ public class Trip
 
     public override string ToString()
     {
-        return $"Из: {From} в: {To} цена: {Cost} руб";
+        return $"Из: {From} в: {To} цена: {Cost} руб, количество свободных мест: {NumberOfAvailableSeats}, " +
+            $"расположение автомобиля: {CarPosition}";
     }
 
 }

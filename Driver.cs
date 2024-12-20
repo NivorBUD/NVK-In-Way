@@ -8,43 +8,50 @@ namespace TGBotNVK;
 
 public class Driver
 {
-    private string autoName;
-    private string autoNumber;
-    private string autoColor;
-    private long TGId;
+    private Car car;
     private int rating;
     private int allTripsCount;
 
     public List<Trip> trips = new List<Trip>();
     public Trip CreatedTrip;
+    public long TGId { get; private set; }
 
-    public bool IsProfileComplete => autoName != null && autoNumber != null && autoColor != null && TGId != null;
+    public bool IsProfileComplete => car.Name != "" && car.Number != "" && car.Color != "" && TGId != null;
 
-    public Driver() { }
+    public Driver(long id) 
+    {
+        car = new();
+        TGId = id;
+    }
 
     public void SetAutoName(string name)
     {
-        autoName = name;
+        car.Name = name;
     }
 
     public void SetAutoNumber(string number)
     {
-        autoNumber = number;
+        car.Number = number;
     }
 
-    public void SetAutoColor(string color) 
-    { 
-        autoColor = color;
+    public void SetAutoColor(string color)
+    {
+        car.Color = color;
     }
 
-    public void SetTGId(long id) 
+    public void SetTGId(long id)
     {
         TGId = id;
     }
 
     public override string ToString()
     {
-        return $"Автомобиль: {autoName}, номер: {autoNumber}, цвет: {autoColor}, tg id: {TGId}";
+        return $"{car}, tg id: {TGId}";
+    }
+
+    public string GetAutoInfo()
+    {
+        return car.ToString();
     }
 
     public void EndCreatingTrip()
