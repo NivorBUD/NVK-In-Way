@@ -4,6 +4,7 @@ using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Interfaces;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
+using NvkInWayWebApi.Domain.Models.Profiles;
 using NvkInWayWebApi.Domain.RepositoriesContract;
 
 namespace NvkInWayWebApi.Application.Services
@@ -87,6 +88,19 @@ namespace NvkInWayWebApi.Application.Services
             var resDto = GetActiveTripsResDto.MapFrom(tripResult.Data);
 
             return OperationResult<GetActiveTripsResDto>.Success(resDto);
+        }
+
+        public async Task<OperationResult> RecordToTrip(RecordReqDto recordReqDto)
+        {
+            var record = new Record
+            {
+                Id = Guid.NewGuid(),
+                Driver = new DriverProfile { TgProfileId = recordReqDto.DriverId },
+                Passenger = new PassengerProfile { TgProfileId = recordReqDto.PassengerId },
+                Trip = new Trip { Id = recordReqDto.TripId }
+            };
+
+            return await repository.RecordToTripAsync(record);
         }
     }
 }

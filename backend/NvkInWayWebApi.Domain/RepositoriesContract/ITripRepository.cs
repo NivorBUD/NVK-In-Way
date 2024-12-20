@@ -15,5 +15,7 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
         public Task<OperationResult> UpdateTripAsync(Trip trip);
 
         public Task<OperationResult> DeleteTripAsync(Guid id);
+
+        public Task<OperationResult> RecordToTripAsync(Record record);
     }
 }

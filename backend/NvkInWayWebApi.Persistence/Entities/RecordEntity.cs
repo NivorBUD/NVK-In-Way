@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NvkInWayWebApi.Persistence.Entities;
+﻿namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class RecordEntity
 {

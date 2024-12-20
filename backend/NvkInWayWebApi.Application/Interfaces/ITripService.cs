@@ -1,6 +1,6 @@
 ﻿using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Domain;
-using NvkInWayWebApi.Domain.Models;
 
 namespace NvkInWayWebApi.Application.Interfaces
 {
@@ -15,5 +15,7 @@ namespace NvkInWayWebApi.Application.Interfaces
         public Task<OperationResult> UpdateDriverTripAsync(CreateTripReqDto tripReqDto);
 
         public Task<OperationResult> DeleteTripAsync(Guid trip);
+
+        public Task<OperationResult> RecordToTrip(RecordReqDto recordReqDto);
     }
 }
