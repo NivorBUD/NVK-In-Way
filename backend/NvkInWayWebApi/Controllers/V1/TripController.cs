@@ -1,7 +1,8 @@
 ﻿using Asp.Versioning;
 using Microsoft.AspNetCore.Mvc;
 using NvkInWayWebApi.Application.Common;
-using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
+using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
+using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
@@ -63,13 +64,33 @@ namespace NvkInWayWebApi.Controllers.V1
         /// </summary>
         /// <param name="tripId">The id of Trip</param>
         /// <returns></returns>
-        [HttpGet("get-trip-passengers/{tripId}")]
+        [HttpGet("get-trip-info/{tripId}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<GetActiveTripsResDto>> GetShortInfoTripPassengers(Guid tripId)
+        {
+            var result = await service.GetTripById(tripId);
+
+            if (!result.IsSuccess)
+                return BadRequest(new MyResponseMessage(result.ErrorText));
+
+            return Ok(result.Data);
+        }
+
+        /// <summary>
+        /// Returns brief information about the passengers of the trip
+        /// </summary>
+        /// <param name="tripId">The id of Trip</param>
+        /// <returns></returns>
+        [HttpPost("search-trips")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<PassengerShortResDto>> GetShortInfoTripPassengers(Guid tripId)
+        public async Task<ActionResult<List<ShortActiveTripResDto>>> GetShortTripInfoByInterval(
+            [FromBody] IntervalSearchReqDto interval, int startIndex, int count)
         {
-            var result = await service.GetTripById(tripId);
+            var result = await service.GetShortTripInfoByIntervalAsync(interval, startIndex, count);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));

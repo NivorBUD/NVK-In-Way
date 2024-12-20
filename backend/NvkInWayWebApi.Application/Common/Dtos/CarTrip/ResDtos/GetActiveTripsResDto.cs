@@ -2,7 +2,7 @@
 using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
 using NvkInWayWebApi.Domain.Models;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip
+namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos
 {
     public class GetActiveTripsResDto
     {

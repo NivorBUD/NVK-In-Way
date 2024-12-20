@@ -1,7 +1,7 @@
 ﻿using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
 
-namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip
+namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos
 {
     public class CreateTripReqDto
     {

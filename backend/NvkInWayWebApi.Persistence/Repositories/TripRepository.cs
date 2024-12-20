@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
 using NvkInWayWebApi.Domain.RepositoriesContract;
@@ -31,6 +32,48 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return OperationResult.Error("Поездка для удаления не обнаружен");
         }
 
+        public async Task<OperationResult<List<Trip>>> GetTripsByIntervalAsync(TripSearchInterval searchDto, int startIndex, int count)
+        {
+            // Начинаем формировать запрос
+            var query = _dbSet.AsQueryable();
+
+            // Применяем фильтры на основе входных параметров
+            if (searchDto.StartPointLocation != null)
+            {
+                query = query.Where(trip => trip.StartPointNavigation.Description == LocationEntity.MapFrom(searchDto.StartPointLocation).Description);
+            }
+
+            if (searchDto.EndPointLocation != null)
+            {
+                query = query.Where(trip => trip.EndPointNavigation.Description == LocationEntity.MapFrom(searchDto.EndPointLocation).Description);
+            }
+
+            if (searchDto.MinDateTime.HasValue)
+            {
+                query = query.Where(trip => trip.DriveStartTime >= searchDto.MinDateTime.Value);
+            }
+
+            if (searchDto.MaxEndTime.HasValue)
+            {
+                query = query.Where(trip => trip.DriveEndTime <= searchDto.MaxEndTime.Value);
+            }
+
+            // Применяем пагинацию
+            //var totalCount = await query.CountAsync(); // Общее количество найденных поездок
+            var result = await query
+                .Include(d => d.Driver)
+                .Include(t => t.Car)
+                .Include(p => p.StartPointNavigation)
+                .Include(p => p.EndPointNavigation)
+                .Include(t => t.Records)
+                .Skip(startIndex)
+                .Take(count)
+                .Select(c => TripEntity.MapFrom(c))
+                .ToListAsync();
+
+            return OperationResult<List<Trip>>.Success(result);
+        }
+
         public async Task<OperationResult<Trip>> GetTripByTripIdAsync(Guid tripId)
         {
             var dbTrip = await _dbSet
@@ -39,8 +82,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
                     .Include(p => p.StartPointNavigation)
                     .Include(p => p.EndPointNavigation)
                     .Include(t => t.Records)
-                    .FirstOrDefaultAsync(t => t.Id == tripId)
-                ;
+                    .FirstOrDefaultAsync(t => t.Id == tripId);
 
             if (dbTrip == null)
                 return OperationResult<Trip>.Error("Поездка с таким идентификатором не была обнаружена");
