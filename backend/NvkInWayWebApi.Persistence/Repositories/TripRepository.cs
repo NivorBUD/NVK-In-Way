@@ -138,9 +138,67 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return OperationResult<List<Trip>>.Success(result);
         }
 
+        public async Task<OperationResult> RecordToTripAsync(Record record)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                var driverEntity = await _context.Set<DriverEntity>()
+                    .Include(d => d.Trips)
+                    .FirstOrDefaultAsync(d => d.TgProfileId == record.Driver.TgProfileId);
+
+                if (driverEntity == null)
+                    return OperationResult.Error("Водитель не найден");
+
+                var passengerEntity = await _context.Set<PassengerEntity>()
+                    .Include(p => p.Records)
+                    .FirstOrDefaultAsync(d => d.TgProfileId == record.Passenger.TgProfileId);
+
+                if (passengerEntity == null)
+                    return OperationResult.Error("Пассажир не найден");
+
+                var tripEntity = await _context.Set<TripEntity>()
+                    .FirstOrDefaultAsync(d => d.Id == record.Trip.Id);
+
+                if (tripEntity == null)
+                    return OperationResult.Error("Поездка не найдена");
+
+                await _context.Set<RecordEntity>().AddAsync(MapFrom(record));
+
+                await _context.SaveChangesAsync();
+                await transaction.CommitAsync(); // Завершение транзакции
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                await transaction.RollbackAsync(); // Откат транзакции
+                return OperationResult.Error("Произошла ошибка при записи на поездку. Возможно, данные были изменены.");
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync(); // Откат транзакции
+                return OperationResult.Error("Произошла ошибка: " + ex.Message);
+            }
+
+            return OperationResult.Success(204);
+        }
+
         public Task<OperationResult> UpdateTripAsync(Trip trip)
         {
             throw new NotImplementedException();
+        }
+
+        public RecordEntity MapFrom(Record record)
+        {
+            var recordEntity = new RecordEntity
+            {
+                Id = record.Id,
+                DriverId = record.Driver.TgProfileId,
+                PassengerId = record.Passenger.TgProfileId,
+                TripId = record.Trip.Id
+            };
+
+            return recordEntity;
         }
     }
 }

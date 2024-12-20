@@ -85,7 +85,7 @@ public partial class NvkInWayContext : DbContext
             entity.ToTable("passengers");
 
             entity.Property(e => e.Rating).HasColumnName("rating");
-            
+
             entity.Property(e => e.TripCount).HasColumnName("trip_count");
         });
 

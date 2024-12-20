@@ -4,6 +4,7 @@ using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
+using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
 
@@ -96,6 +97,20 @@ namespace NvkInWayWebApi.Controllers.V1
                 return BadRequest(new MyResponseMessage(result.ErrorText));
 
             return Ok(result.Data);
+        }
+
+        [HttpPost("record-to-trip")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult> RecordToTrip([FromBody] RecordReqDto recordReqDto)
+        {
+            var addResult = await service.RecordToTrip(recordReqDto);
+
+            if (!addResult.IsSuccess)
+                return BadRequest(new MyResponseMessage(addResult.ErrorText));
+
+            return Created();
         }
     }
 }
