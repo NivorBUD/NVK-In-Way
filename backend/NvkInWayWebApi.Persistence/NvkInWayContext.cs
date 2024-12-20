@@ -193,29 +193,27 @@ public partial class NvkInWayContext : DbContext
                 .HasColumnName("booked_places")
                 .IsRequired(); // Обязательно
 
-            //Тут собака зарыта
-
             // Настройка отношений с другими сущностями
             entity.HasOne(d => d.Car)
-                .WithMany(c => c.Trips) // Предполагается, что у Car нет навигационного свойства для поездок
+                .WithMany(c => c.Trips)
                 .HasForeignKey(d => d.CarId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_car");
 
             entity.HasOne(d => d.Driver)
-                .WithMany(c => c.Trips) // Предполагается, что у Driver нет навигационного свойства для поездок
+                .WithMany(c => c.Trips)
                 .HasForeignKey(d => d.DriverId)
                 .OnDelete(DeleteBehavior.Cascade) // Поведение при удалении
                 .HasConstraintName("fk_trips_driver");
 
             entity.HasOne(d => d.StartPointNavigation)
-                .WithMany(c => c.TripStartPointNavigations) // Предполагается, что у Location нет навигационного свойства для поездок
+                .WithMany(c => c.TripStartPointNavigations)
                 .HasForeignKey(d => d.StartPointId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_start_point");
 
             entity.HasOne(d => d.EndPointNavigation)
-                .WithMany(c => c.TripEndPointNavigations) // Предполагается, что у Location нет навигационного свойства для поездок
+                .WithMany(c => c.TripEndPointNavigations)
                 .HasForeignKey(d => d.EndPointId)
                 .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
                 .HasConstraintName("fk_trips_end_point");

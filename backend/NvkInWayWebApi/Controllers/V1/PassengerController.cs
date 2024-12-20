@@ -73,11 +73,6 @@ namespace NvkInWayWebApi.Controllers.V1
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeletePassengerProfile([FromBody] PassengerShortProfileReqDto passengerProfileReq)
         {
-            //var profileExists = await service.GetPassengerProfileByIdAsync(passengerProfileReq.TgProfileId);
-
-            //if (!profileExists.IsSuccess)
-            //    return BadRequest(new MyResponseMessage(profileExists.ErrorText));
-
             var deleteResult = await service.DeletePassengerProfileAsync(passengerProfileReq.TgProfileId);
 
             if (!deleteResult.IsSuccess)

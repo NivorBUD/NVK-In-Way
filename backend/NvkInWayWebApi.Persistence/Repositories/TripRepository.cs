@@ -59,7 +59,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
             }
 
             // Применяем пагинацию
-            //var totalCount = await query.CountAsync(); // Общее количество найденных поездок
             var result = await query
                 .Include(d => d.Driver)
                 .Include(t => t.Car)

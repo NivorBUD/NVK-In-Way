@@ -35,7 +35,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
         {
             // Получаем существующего пассажира
             var existingPassenger = await _dbSet
-                // Не отслеживаем существующий объектd
                 .FirstOrDefaultAsync(p => p.TgProfileId == passenger.TgProfileId);
 
             if (existingPassenger == null)
@@ -45,9 +44,6 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
             existingPassenger.Rating = passenger.Rating;
             existingPassenger.TripCount = passenger.TripsCount;
-
-            // Применяем изменения
-            //_dbSet.Update(MapFrom(passenger));
 
             await SaveChangesAsync();
             return OperationResult.Success(201);
