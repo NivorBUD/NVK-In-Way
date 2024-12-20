@@ -23,7 +23,7 @@ public static class MessageHandler
                 {
                     if (msg.Text == "/start")
                     {
-                        await PrintStartMenu(botClient, chat, msg);
+                        await PrintStartMenu(botClient, chat);
                         return;
                     }
                     return;
@@ -53,14 +53,14 @@ public static class MessageHandler
         await botClient.SendTextMessageAsync(chat.Id, "Кто вы", replyMarkup: inlineKeyboard);
     }
 
-    public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat)
+    public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat, long userId)
     {
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
                 {
                     new InlineKeyboardButton[]
                     {
-                        Program.DriversDataBase.ContainsKey(msg.From.Id) ?
+                        Program.DriversDataBase.ContainsKey(userId) ?
                             InlineKeyboardButton.WithCallbackData("Редактировать профиль", "change profile") :
                             InlineKeyboardButton.WithCallbackData("Создать профиль", "create profile")
                     },
@@ -142,7 +142,7 @@ public static class MessageHandler
             case "driver_button":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    PrintDriverMenu(botClient, chat);
+                    await PrintDriverMenu(botClient, chat, user.Id);
                     return;
                 }
             case "view_info":
