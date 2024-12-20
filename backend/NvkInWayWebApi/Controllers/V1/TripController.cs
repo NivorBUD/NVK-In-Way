@@ -79,14 +79,17 @@ namespace NvkInWayWebApi.Controllers.V1
             return Ok(result.Data);
         }
 
+
         /// <summary>
-        /// Returns brief information about the passengers of the trip
+        /// Returns brief information about existing trips found by the query settings
         /// </summary>
-        /// <param name="tripId">The id of Trip</param>
+        /// <param name="interval">Interval settings</param>
+        /// <param name="startIndex">start index</param>
+        /// <param name="count">trips get count</param>
         /// <returns></returns>
         [HttpPost("search-trips")]
         [Produces("application/json")]
-        [ProducesResponseType(typeof(DriverProfileResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ShortActiveTripResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<List<ShortActiveTripResDto>>> GetShortTripInfoByInterval(
             [FromBody] IntervalSearchReqDto interval, int startIndex, int count)
@@ -99,6 +102,12 @@ namespace NvkInWayWebApi.Controllers.V1
             return Ok(result.Data);
         }
 
+
+        /// <summary>
+        /// sign up for a trip
+        /// </summary>
+        /// <param name="recordReqDto">Record to trip settings</param>
+        /// <returns></returns>
         [HttpPost("record-to-trip")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]

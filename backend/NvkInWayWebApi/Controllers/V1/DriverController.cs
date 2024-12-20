@@ -96,7 +96,7 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpDelete("delete-driver-cars")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> DeleteDriverProfileCars([FromBody] List<Guid> listCarIds,
             [FromQuery] long driverProfileId)

@@ -38,6 +38,11 @@ namespace NvkInWayWebApi.Controllers.V1
             return Ok(result.Data);
         }
 
+        /// <summary>
+        /// Create new user profile
+        /// </summary>
+        /// <param name="passengerProfileReq">Create new passenger with data</param>
+        /// <returns></returns>
         [HttpPost("create-passenger-profile")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
@@ -57,6 +62,11 @@ namespace NvkInWayWebApi.Controllers.V1
             return Created();
         }
 
+        /// <summary>
+        /// Deletes the user's profile
+        /// </summary>
+        /// <param name="passengerProfileReq"></param>
+        /// <returns></returns>
         [HttpDelete("delete-passenger-profile")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
@@ -76,6 +86,11 @@ namespace NvkInWayWebApi.Controllers.V1
             return NoContent();
         }
 
+        /// <summary>
+        /// Updates passenger profile data
+        /// </summary>
+        /// <param name="passengerProfileReq"></param>
+        /// <returns></returns>
         [HttpPatch("update-passenger-rating")]
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status201Created)]
