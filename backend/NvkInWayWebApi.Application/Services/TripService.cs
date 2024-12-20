@@ -29,6 +29,7 @@ namespace NvkInWayWebApi.Application.Services
                 TotalPlaces = tripReqDto.TotalPlaces,
                 Cost = tripReqDto.TripCost,
                 CarLocation = tripReqDto.CarLocation,
+                DriverId = tripReqDto.TripCar.DriverId,
                 DriverCar = OnlyCarIdsReqDto.MapFrom(tripReqDto.TripCar),
             };
 

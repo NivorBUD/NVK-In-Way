@@ -9,8 +9,6 @@ namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos
 {
     public class LocationResDto
     {
-        public Guid Id { get; set; }
-
         public string TextDescription { get; set; }
 
         public Coordinate Coordinate { get; set; }
@@ -19,7 +17,6 @@ namespace NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos
         {
             return new LocationResDto()
             {
-                Id = location.Id,
                 TextDescription = location.TextDescription,
                 Coordinate = location.Coordinate,
             };

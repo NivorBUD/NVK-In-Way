@@ -40,6 +40,9 @@ namespace NvkInWayWebApi.Persistence.Repositories
         public async Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId)
         {
             var tripEntities = await _context.Set<TripEntity>()
+                .Include(t => t.Car)
+                .Include(p => p.StartPointNavigation)
+                .Include(p => p.EndPointNavigation)
                 .Include(t => t.Records)
                 .Where(t => t.Driver.TgProfileId == driverId).ToListAsync();
 

@@ -205,7 +205,7 @@ public partial class NvkInWayContext : DbContext
             entity.HasOne(d => d.Driver)
                 .WithMany(c => c.Trips) // Предполагается, что у Driver нет навигационного свойства для поездок
                 .HasForeignKey(d => d.DriverId)
-                .OnDelete(DeleteBehavior.ClientSetNull) // Поведение при удалении
+                .OnDelete(DeleteBehavior.Cascade) // Поведение при удалении
                 .HasConstraintName("fk_trips_driver");
 
             entity.HasOne(d => d.StartPointNavigation)
