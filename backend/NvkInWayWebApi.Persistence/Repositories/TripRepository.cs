@@ -42,7 +42,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
                     .FirstOrDefaultAsync(t => t.Id == tripId)
                 ;
 
-            if(dbTrip == null)
+            if (dbTrip == null)
                 return OperationResult<Trip>.Error("Поездка с таким идентификатором не была обнаружена");
 
             var trip = TripEntity.MapFrom(dbTrip);

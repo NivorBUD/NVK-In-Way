@@ -67,7 +67,7 @@ public partial class TripEntity
         {
             Id = trip.Id,
             DriverId = trip.DriverId,
-            DriverCar =  CarEntity.MapFrom(trip.Car),
+            DriverCar = CarEntity.MapFrom(trip.Car),
             StartPoint = LocationEntity.MapFrom(trip.StartPointNavigation),
             EndPoint = LocationEntity.MapFrom(trip.EndPointNavigation),
             CarLocation = trip.CarLocation,

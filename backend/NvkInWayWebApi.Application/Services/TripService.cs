@@ -19,7 +19,6 @@ namespace NvkInWayWebApi.Application.Services
 
         public async Task<OperationResult> AddDriverTripAsync(CreateTripReqDto tripReqDto)
         {
-            // Добавить преобразование из dto в модель(cделано)
             var newTrip = new Trip()
             {
                 StartPoint = LocationReqDto.MapFrom(tripReqDto.StartPoint),
