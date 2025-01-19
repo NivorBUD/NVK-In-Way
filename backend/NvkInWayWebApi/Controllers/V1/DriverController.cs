@@ -7,6 +7,9 @@ using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
 using System.Net;
 using NvkInWayWebApi.Application.Common;
+using NvkInWayWebApi.Application.ImageService;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Formats.Tga;
 
 namespace NvkInWayWebApi.Controllers
 {
@@ -17,9 +20,15 @@ namespace NvkInWayWebApi.Controllers
     {
         private readonly IDriverService service;
 
-        public DriverController(IDriverService service)
+        private readonly IWebHostEnvironment webHostEnvironment;
+
+        private readonly ImageService imageService;
+
+        public DriverController(IDriverService service, IWebHostEnvironment webHostEnvironment, ImageService imageService)
         {
             this.service = service;
+            this.webHostEnvironment = webHostEnvironment;
+            this.imageService = imageService;
         }
 
         #region ProfileEndpoints
@@ -128,6 +137,50 @@ namespace NvkInWayWebApi.Controllers
                 return BadRequest(new MyResponseMessage(result.ErrorText));
 
             return Created();
+        }
+
+        [HttpPost("upload-car-image")]
+        public async Task<ActionResult> UploadCarImage(IFormFile file, [FromForm] Guid carId)
+        {
+            try
+            {
+                if (file.Length > 0)
+                {
+                    var path = webHostEnvironment.WebRootPath;
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+
+                    var saveResult = await imageService.SaveImageAsync(
+                        file, TgaImageType.RleColorMapped, ImageService.CreateSavePathFromGuid(carId));
+
+                    if (!saveResult.IsSuccess)
+                        return StatusCode(saveResult.StatusCode, new MyResponseMessage(saveResult.ErrorText));
+
+                    return Ok(new MyResponseMessage("Изображение успешно сохранено"));
+                }
+
+                return BadRequest(new MyResponseMessage("Файл не был передан"));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.BadGateway, new MyResponseMessage(ex.Message));
+            }
+        }
+
+        [HttpGet("download-car-image/{fileName}")]
+        public async Task<IActionResult> Get([FromRoute] string fileName)
+        {
+            string path = webHostEnvironment.WebRootPath + "\\uploads\\";
+            var filePath = path + fileName;
+            if (System.IO.File.Exists(filePath))
+            {
+                byte[] b = await System.IO.File.ReadAllBytesAsync(filePath);
+                return File(b, "image/png");
+            }
+
+            return null;
         }
 
         #endregion

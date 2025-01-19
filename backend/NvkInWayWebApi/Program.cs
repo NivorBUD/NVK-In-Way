@@ -22,6 +22,7 @@ namespace NvkInWayWebApi
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.ConfigureOptions<ConfigureSwaggerOptions>();
+            builder.Services.RegisterImageService();
 
             builder.Services.AddSwaggerGen(swagger =>
             {

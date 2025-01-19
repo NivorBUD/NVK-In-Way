@@ -17,4 +17,8 @@
     <ProjectReference Include="..\NvkInWayWebApi.Application\NvkInWayWebApi.Application.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
+  </ItemGroup>
+
 </Project>
