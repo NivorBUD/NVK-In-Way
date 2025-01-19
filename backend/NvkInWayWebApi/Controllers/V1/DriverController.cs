@@ -8,6 +8,7 @@ using NvkInWayWebApi.Application.Interfaces;
 using System.Net;
 using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.ImageService;
+using NvkInWayWebApi.Domain;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Tga;
 
@@ -18,15 +19,15 @@ namespace NvkInWayWebApi.Controllers
     [ApiVersion("1.0")]
     public class DriverController : ControllerBase
     {
-        private readonly IDriverService service;
+        private readonly IDriverService dbService;
 
         private readonly IWebHostEnvironment webHostEnvironment;
 
         private readonly ImageService imageService;
 
-        public DriverController(IDriverService service, IWebHostEnvironment webHostEnvironment, ImageService imageService)
+        public DriverController(IDriverService dbService, IWebHostEnvironment webHostEnvironment, ImageService imageService)
         {
-            this.service = service;
+            this.dbService = dbService;
             this.webHostEnvironment = webHostEnvironment;
             this.imageService = imageService;
         }
@@ -44,7 +45,7 @@ namespace NvkInWayWebApi.Controllers
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<DriverProfileResDto>> GetDriverProfileById(long profileId)
         {
-            var result = await service.GetDriverProfileByIdAsync(profileId);
+            var result = await dbService.GetDriverProfileByIdAsync(profileId);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -63,7 +64,7 @@ namespace NvkInWayWebApi.Controllers
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateDirverProfile([FromBody] DriverProfileReqDto driverProfileReq)
         {
-            var addResult = await service.AddDriverProfileAsync(driverProfileReq);
+            var addResult = await dbService.AddDriverProfileAsync(driverProfileReq);
 
             if (!addResult.IsSuccess)
                 return BadRequest(new MyResponseMessage(addResult.ErrorText));
@@ -89,7 +90,7 @@ namespace NvkInWayWebApi.Controllers
         public async Task<ActionResult> UpdateDriverProfileCars([FromBody] List<DetailedСarReqDto> listDetailedCars,
             [FromQuery] long driverProfileId)
         {
-            var result = await service.UpdateDriverCars(driverProfileId, listDetailedCars);
+            var result = await dbService.UpdateDriverCars(driverProfileId, listDetailedCars);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -110,7 +111,7 @@ namespace NvkInWayWebApi.Controllers
         public async Task<ActionResult> DeleteDriverProfileCars([FromBody] List<Guid> listCarIds,
             [FromQuery] long driverProfileId)
         {
-            var result = await service.DeleteDriverCars(driverProfileId, listCarIds);
+            var result = await dbService.DeleteDriverCars(driverProfileId, listCarIds);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -131,7 +132,7 @@ namespace NvkInWayWebApi.Controllers
         public async Task<ActionResult> AddDriverProfileCars([FromBody] List<CarReqDto> listDetailedCars,
             [FromQuery] long driverProfileId)
         {
-            var result = await service.AddDriverCars(driverProfileId, listDetailedCars);
+            var result = await dbService.AddDriverCars(driverProfileId, listDetailedCars);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -144,24 +145,28 @@ namespace NvkInWayWebApi.Controllers
         {
             try
             {
-                if (file.Length > 0)
+                if (!IsFileValid(file))
                 {
-                    var path = webHostEnvironment.WebRootPath;
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-
-                    var saveResult = await imageService.SaveImageAsync(
-                        file, TgaImageType.RleColorMapped, ImageService.CreateSavePathFromGuid(carId));
-
-                    if (!saveResult.IsSuccess)
-                        return StatusCode(saveResult.StatusCode, new MyResponseMessage(saveResult.ErrorText));
-
-                    return Ok(new MyResponseMessage("Изображение успешно сохранено"));
+                    return BadRequest(new MyResponseMessage("Файл не был передан"));
                 }
 
-                return BadRequest(new MyResponseMessage("Файл не был передан"));
+                EnsureUploadsDirectoryExists();
+
+                var setIsUploaded = await dbService.SetCarImageIsUploadedAsync(carId);
+
+                if (!setIsUploaded.IsSuccess)
+                    return StatusCode(setIsUploaded.StatusCode, setIsUploaded.ErrorText);
+
+                var saveResult = await imageService.SaveImageAsync(
+                    file, TgaImageType.RleColorMapped, ImageService.CreateSavePathFromGuid(carId));
+
+                if (!saveResult.IsSuccess)
+                {
+                    await dbService.SetCarImageIsUnUploadedAsync(carId);
+                    return StatusCode(saveResult.StatusCode, new MyResponseMessage(saveResult.ErrorText));
+                }
+
+                return Ok(new MyResponseMessage("Изображение успешно сохранено"));
             }
             catch (Exception ex)
             {
@@ -169,18 +174,58 @@ namespace NvkInWayWebApi.Controllers
             }
         }
 
-        [HttpGet("download-car-image/{fileName}")]
-        public async Task<IActionResult> Get([FromRoute] string fileName)
+        [HttpGet("download-car-image/{carId}")]
+        public async Task<IActionResult> DownloadCarImage([FromRoute] Guid carId)
         {
-            string path = webHostEnvironment.WebRootPath + "\\uploads\\";
-            var filePath = path + fileName;
-            if (System.IO.File.Exists(filePath))
+            var getPathResult = await GetDownloadCarPathAsync(carId);
+            if(!getPathResult.IsSuccess)
+                return StatusCode(getPathResult.StatusCode, new MyResponseMessage(getPathResult.ErrorText));
+
+            var downloadPath = getPathResult.Data;
+
+            var downloadData = await imageService.DownloadImageAsync(
+                TgaImageType.RleColorMapped, downloadPath);
+
+            if (!downloadData.IsSuccess)
+                return StatusCode(downloadData.StatusCode, new MyResponseMessage(downloadData.ErrorText));
+            
+            return File(downloadData.Data.Bytes, downloadData.Data.MimeType, downloadData.Data.FileName);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        private async Task<OperationResult<string>> GetDownloadCarPathAsync(Guid carId)
+        {
+            var car = await dbService.GetCarByIdAsync(carId);
+            string path = string.Empty;
+
+            if (!car.IsSuccess)
             {
-                byte[] b = await System.IO.File.ReadAllBytesAsync(filePath);
-                return File(b, "image/png");
+                if (car.ErrorText != "Машина не найдена")
+                    return OperationResult<string>.Error("Машина не найдена");
+
+                path = Path.Combine(webHostEnvironment.WebRootPath, "driver_cars", "anonim_vehicle.jpeg");
+                return OperationResult<string>.Success(path);
             }
 
-            return null;
+            path = ImageService.CreateSavePathFromGuid(carId) + ".jpeg";
+            return OperationResult<string>.Success(path);
+        }
+
+        private bool IsFileValid(IFormFile file)
+        {
+            return file != null && file.Length > 0;
+        }
+
+        private void EnsureUploadsDirectoryExists()
+        {
+            var path = webHostEnvironment.WebRootPath;
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
         }
 
         #endregion

@@ -49,6 +49,9 @@ public partial class NvkInWayContext : DbContext
             entity.Property(e => e.Number)
                 .HasMaxLength(9)
                 .HasColumnName("number");
+            entity.Property(e => e.ImageUploaded)
+                .HasColumnName("img_uploaded")
+                .HasDefaultValue(false);
 
             entity.HasOne(d => d.Driver).WithMany(p => p.Cars)
                 .HasForeignKey(d => d.DriverId)

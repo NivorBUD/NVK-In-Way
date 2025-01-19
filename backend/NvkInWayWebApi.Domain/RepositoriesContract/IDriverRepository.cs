@@ -21,5 +21,11 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
         public Task<OperationResult> AddDriverCarsAsync(long driverId, List<Car> cars);
 
         public Task<OperationResult> DeleteDriverCarsAsync(long driverId, List<Guid> carsIds);
+
+        public Task<OperationResult> SetCarImageIsUploadedAsync(Guid carId);
+
+        public Task<OperationResult> SetCarImageIsUnUploadedAsync(Guid carId);
+
+        public Task<OperationResult<Car>> GetCarByIdAsync(Guid carId);
     }
 }

@@ -37,6 +37,11 @@ namespace NvkInWayWebApi.Application.Services
             return OperationResult<DriverProfileResDto>.Success(resDto);
         }
 
+        public async Task<OperationResult<Car>> GetCarByIdAsync(Guid carId)
+        {
+            return await repository.GetCarByIdAsync(carId);
+        }
+
         public async Task<OperationResult> DeleteDriverProfileByIdAsync(long profileId)
         {
             return await repository.DeleteDriverAsync(profileId);
@@ -85,6 +90,16 @@ namespace NvkInWayWebApi.Application.Services
                 .ToList();
 
             return await repository.UpdateDriverCarsAsync(profileId, cars);
+        }
+
+        public Task<OperationResult> SetCarImageIsUploadedAsync(Guid carId)
+        {
+            return repository.SetCarImageIsUploadedAsync(carId);
+        }
+
+        public Task<OperationResult> SetCarImageIsUnUploadedAsync(Guid carId)
+        {
+            return repository.SetCarImageIsUnUploadedAsync(carId);
         }
     }
 }

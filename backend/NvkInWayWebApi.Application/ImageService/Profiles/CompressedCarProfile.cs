@@ -17,9 +17,9 @@ namespace NvkInWayWebApi.Application.ImageService.Profiles
 
         public string Folder => "driver_cars";
 
-        public int Width => 600;
+        public int Width => 400;
 
-        public int Height => 600;
+        public int Height => 400;
 
         public int MaxSizeBytes => 10 * mb;
 

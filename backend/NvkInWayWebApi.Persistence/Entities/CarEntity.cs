@@ -18,6 +18,8 @@ public partial class CarEntity
 
     public virtual DriverEntity Driver { get; set; } = null!;
 
+    public bool ImageUploaded { get; set; } = false;
+
     public virtual ICollection<TripEntity> Trips { get; set; } = new List<TripEntity>();
 
     public static Car MapFrom(CarEntity carEntity)

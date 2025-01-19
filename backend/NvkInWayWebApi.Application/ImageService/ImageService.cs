@@ -48,8 +48,8 @@ namespace NvkInWayWebApi.Application.ImageService
                 return OperationResult.Error(
                     $"Некорректный размер изображения - минимальный размер ({imageProfile.Width}, {imageProfile.Height})");
 
-            var profileFolder = Path.Combine(webHostEnvironment.WebRootPath, imageProfile.Folder, savePath);
-            var rootDir = Directory.GetParent(profileFolder).ToString();
+            var saveDestination = Path.Combine(webHostEnvironment.WebRootPath, imageProfile.Folder, savePath);
+            var rootDir = Directory.GetParent(saveDestination).ToString();
             
             var checkDirResult = PrepareProfileFolder(rootDir);
 
@@ -57,15 +57,30 @@ namespace NvkInWayWebApi.Application.ImageService
                 return checkDirResult;
 
             Resize(image, imageProfile);
-            await image.SaveAsJpegAsync(profileFolder + ".jpeg");
+            await image.SaveAsJpegAsync(saveDestination + ".jpeg");
 
             return OperationResult.Success();
         }
 
-        //public async Task<OperationResult> DownloadImageAsync(TgaImageType imageType, string savePath)
-        //{
+        public async Task<OperationResult<DownloadData>> DownloadImageAsync(TgaImageType imageType, string path)
+        {
+            var imageProfile = imageProfiles.FirstOrDefault(profile =>
+                profile.ImageType == imageType);
 
-        //}
+            if (imageProfile == null)
+                return OperationResult<DownloadData>.Error($"Профиль изображения не был найден. ");
+
+            var destinationPath = Path.Combine(webHostEnvironment.WebRootPath, imageProfile.Folder, path);
+
+            if (!System.IO.File.Exists(destinationPath))
+                return OperationResult<DownloadData>.Error("Изображение не найдено");
+
+            var bytes = await System.IO.File.ReadAllBytesAsync(destinationPath);
+
+            var name = Path.GetFileName(destinationPath);
+
+            return OperationResult<DownloadData>.Success(new DownloadData(bytes, name, "image/jpeg"));
+        }
 
         private bool IsValidExtension(IFormFile formFile, IImageProfile imageProfile)
         {
@@ -123,4 +138,6 @@ namespace NvkInWayWebApi.Application.ImageService
             return sb.ToString();
         }
     }
+
+    public record DownloadData(byte[] Bytes, string FileName, string MimeType);
 }

@@ -24,5 +24,11 @@ namespace NvkInWayWebApi.Application.Interfaces
         public Task<OperationResult> AddDriverCars(long profileId, List<CarReqDto> cars);
 
         public Task<OperationResult> UpdateDriverCars(long profileId, List<DetailedСarReqDto> cars);
+
+        public Task<OperationResult> SetCarImageIsUploadedAsync(Guid carId);
+
+        public Task<OperationResult> SetCarImageIsUnUploadedAsync(Guid carId);
+
+        public Task<OperationResult<Car>> GetCarByIdAsync(Guid carId);
     }
 }
