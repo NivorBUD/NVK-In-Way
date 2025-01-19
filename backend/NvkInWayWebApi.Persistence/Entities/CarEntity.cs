@@ -30,7 +30,8 @@ public partial class CarEntity
             Name = carEntity.Name,
             Number = carEntity.Number,
             Color = carEntity.Color,
-            DriverId = carEntity.DriverId
+            DriverId = carEntity.DriverId,
+            IsImageUploaded = carEntity.ImageUploaded
         };
     }
 
@@ -42,7 +43,8 @@ public partial class CarEntity
             Name = car.Name,
             Number = car.Number,
             Color = car.Color,
-            DriverId = car.DriverId
+            DriverId = car.DriverId,
+            ImageUploaded = car.IsImageUploaded
         };
     }
 }

@@ -11,6 +11,8 @@ using NvkInWayWebApi.Application.ImageService;
 using NvkInWayWebApi.Domain;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Formats.Tga;
+using NvkInWayWebApi.Domain.Models;
+using System.IO;
 
 namespace NvkInWayWebApi.Controllers
 {
@@ -111,6 +113,28 @@ namespace NvkInWayWebApi.Controllers
         public async Task<ActionResult> DeleteDriverProfileCars([FromBody] List<Guid> listCarIds,
             [FromQuery] long driverProfileId)
         {
+            var carResults = await GetDictionaryCarGuidResultAsync(listCarIds);
+            var errorCars = carResults
+                .Where(kvp => !kvp.Value.IsSuccess)
+                .ToDictionary(kvp => kvp.Key, kvp => kvp.Value.ErrorText);
+
+            if (errorCars.Any())
+            {
+                var errorMessage = string.Join(", ", errorCars.Select(kvp => $"ID: {kvp.Key}"));
+                return BadRequest(new MyResponseMessage($"Машины не найдены: {errorMessage}"));
+            }
+
+            var imgDeleteResults = await DeleteCarsImagesAsync(carResults);
+
+            if (imgDeleteResults.Any(r => !r.IsSuccess))
+            {
+                var errorMessage = string.Join(", ", imgDeleteResults
+                    .Where(r => !r.IsSuccess)
+                    .Select(r => r.ErrorText));
+
+                return StatusCode((int)HttpStatusCode.BadRequest, new MyResponseMessage(errorMessage));
+            }
+
             var result = await dbService.DeleteDriverCars(driverProfileId, listCarIds);
 
             if (!result.IsSuccess)
@@ -177,6 +201,10 @@ namespace NvkInWayWebApi.Controllers
         [HttpGet("download-car-image/{carId}")]
         public async Task<IActionResult> DownloadCarImage([FromRoute] Guid carId)
         {
+            var carData = await dbService.GetCarByIdAsync(carId);
+            if(!carData.IsSuccess)
+                return StatusCode(carData.StatusCode, new MyResponseMessage(carData.ErrorText));
+
             var getPathResult = await GetDownloadCarPathAsync(carId);
             if(!getPathResult.IsSuccess)
                 return StatusCode(getPathResult.StatusCode, new MyResponseMessage(getPathResult.ErrorText));
@@ -196,6 +224,32 @@ namespace NvkInWayWebApi.Controllers
 
         #region Helpers
 
+        private async Task<IEnumerable<OperationResult>> DeleteCarsImagesAsync(Dictionary<Guid, OperationResult<Car>> carIdResults)
+        {
+            var imgDelResults = new List<OperationResult>();
+
+            foreach (var key in carIdResults.Keys)
+            {
+                imgDelResults.Append(await imageService.DeleteImageAsync(GetImagePathFromGuid(key), TgaImageType.RleColorMapped));
+            }
+
+            return imgDelResults;
+        }
+
+        private async Task<Dictionary<Guid, OperationResult<Car>>> GetDictionaryCarGuidResultAsync(IEnumerable<Guid> carIds)
+        {
+            var dict = new Dictionary<Guid, OperationResult<Car>>();
+
+            foreach (var carId in carIds)
+            {
+                var result = await dbService.GetCarByIdAsync(carId);
+
+                dict.Add(carId, result);
+            }
+
+            return dict;
+        }
+
         private async Task<OperationResult<string>> GetDownloadCarPathAsync(Guid carId)
         {
             var car = await dbService.GetCarByIdAsync(carId);
@@ -203,15 +257,22 @@ namespace NvkInWayWebApi.Controllers
 
             if (!car.IsSuccess)
             {
-                if (car.ErrorText != "Машина не найдена")
-                    return OperationResult<string>.Error("Машина не найдена");
+                return OperationResult<string>.Error("Машина не найдена");
+            }
 
+            if (!car.Data.IsImageUploaded)
+            {
                 path = Path.Combine(webHostEnvironment.WebRootPath, "driver_cars", "anonim_vehicle.jpeg");
                 return OperationResult<string>.Success(path);
             }
 
-            path = ImageService.CreateSavePathFromGuid(carId) + ".jpeg";
+            path = GetImagePathFromGuid(carId);
             return OperationResult<string>.Success(path);
+        }
+
+        private string GetImagePathFromGuid(Guid guid)
+        {
+            return ImageService.CreateSavePathFromGuid(guid) + ".jpeg";
         }
 
         private bool IsFileValid(IFormFile file)

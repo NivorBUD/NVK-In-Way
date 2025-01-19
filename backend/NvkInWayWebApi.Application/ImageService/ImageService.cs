@@ -82,6 +82,21 @@ namespace NvkInWayWebApi.Application.ImageService
             return OperationResult<DownloadData>.Success(new DownloadData(bytes, name, "image/jpeg"));
         }
 
+        public async Task<OperationResult> DeleteImageAsync(string path, TgaImageType imageType)
+        {
+            var imageProfile = imageProfiles.FirstOrDefault(profile => 
+                profile.ImageType == imageType);
+
+            var destinationPath = Path.Combine(webHostEnvironment.WebRootPath, imageProfile.Folder, path);
+
+            if (!System.IO.File.Exists(destinationPath))
+                return OperationResult.Error($"Изображение [{path}] не найдено. ");
+
+            System.IO.File.Delete(destinationPath);
+
+            return OperationResult.Success();
+        }
+
         private bool IsValidExtension(IFormFile formFile, IImageProfile imageProfile)
         {
             return imageProfile.AllowedExtensions

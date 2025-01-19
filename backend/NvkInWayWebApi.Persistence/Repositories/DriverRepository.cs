@@ -242,7 +242,8 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 DriverId = carEntity.DriverId,
                 Name = carEntity.Name,
                 Number = carEntity.Number,
-                Color = carEntity.Color
+                Color = carEntity.Color,
+                IsImageUploaded = carEntity.ImageUploaded
             };
         }
 
@@ -254,7 +255,8 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 DriverId = carEntity.DriverId,
                 Name = carEntity.Name,
                 Number = carEntity.Number,
-                Color = carEntity.Color
+                Color = carEntity.Color,
+                ImageUploaded = carEntity.IsImageUploaded
             };
         }
     }
