@@ -36,7 +36,7 @@ class Program
 
         _botClient.StartReceiving(UpdateHandler, ErrorHandler, _receiverOptions, cts.Token);
 
-        await Task.Delay(-1); // Бесконечная задержка, чтобы бот работал постоянно
+        await Task.Delay(-1);
     }
 
     public static async void StartBotWithAnotherUpdateHandler(
@@ -67,7 +67,7 @@ class Program
             {
                 case UpdateType.Message:
                     {
-                        MessageHandler.ProcessMessage(update.Message, botClient);
+                        MessageHandler.ProcessMessage(msg: update.Message, botClient);
                         return;
                     }
                 case UpdateType.CallbackQuery:

@@ -19,24 +19,6 @@ public static class ProfileHandler
     {
         var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
 
-        if (driver.IsProfileComplete)
-        {
-            await botClient.SendMessage(msg.Chat.Id, "Ваш профиль водителя заполнен");
-            Program.isBusy = false;
-            return;
-        }
-
-        await botClient.SendMessage(
-                        msg.Chat.Id,
-                        "Введите марку авто");
-
-        Program.StartBotWithAnotherUpdateHandler(CreateDriverProfile);
-    }
-
-    public static async void StartChangingDriverProfile(Message msg, ITelegramBotClient botClient)
-    {
-        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
-
         await botClient.SendMessage(
                         msg.Chat.Id,
                         "Введите марку авто");
@@ -48,7 +30,7 @@ public static class ProfileHandler
     {
         var msg = update.Message;
         var chat = msg.Chat;
-        var driver = Program.GetDriverFromDatabse(msg.From.Id);
+        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
 
         switch (creatingProfileStep)
         {
@@ -103,6 +85,7 @@ public static class ProfileHandler
         {
             await botClient.SendMessage(msg.Chat.Id, "Ваш профиль водителя не заполнен, заполните его");
             Program.isBusy = false;
+            await MessageHandler.PrintDriverMenu(botClient, msg.Chat, msg.From.Id);
             return;
         }
 

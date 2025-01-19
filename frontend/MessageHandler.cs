@@ -55,24 +55,33 @@ public static class MessageHandler
 
     public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat, long userId)
     {
-        var inlineKeyboard = new InlineKeyboardMarkup(
-            new List<InlineKeyboardButton[]>()
+        var isDriverInDataBase = Program.IsDriverIdInDataBase(userId);
+
+        var buttons = new List<InlineKeyboardButton[]>(){
+            new InlineKeyboardButton[]
+            {
+                InlineKeyboardButton.WithCallbackData(
+                    isDriverInDataBase ? "Редактировать профиль" : "Создать профиль", 
+                    "create driver profile")
+            },
+            new InlineKeyboardButton[]
+            {
+                InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
+            }
+        };
+        if (isDriverInDataBase)
+        {
+            buttons.Add(new InlineKeyboardButton[]
                 {
-                    new InlineKeyboardButton[]
-                    {
-                        Program.IsDriverIdInDataBase(userId) ?
-                            InlineKeyboardButton.WithCallbackData("Редактировать профиль", "change profile") :
-                            InlineKeyboardButton.WithCallbackData("Создать профиль", "create profile")
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData("Посмотреть список созданных поездок", "check trips")
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData("Создать поездку", "create trip")
-                    }
+                    InlineKeyboardButton.WithCallbackData("Посмотреть список созданных поездок", "check trips")
                 });
+            buttons.Add(new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Создать поездку", "create trip")
+                });
+        }
+
+        var inlineKeyboard = new InlineKeyboardMarkup(buttons);
 
         await botClient.SendMessage(
             chat.Id, "Выберите действие",
@@ -157,7 +166,7 @@ public static class MessageHandler
                     ActiveTrip.ViewActiveTrip(botClient, chat);
                     return;
                 }
-            case "create profile":
+            case "create driver profile":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
                     Program.isBusy = true;
