@@ -17,5 +17,7 @@ namespace NvkInWayWebApi.Domain.Models
         public string Number { get; set; }
 
         public string Color { get; set; }
+
+        public bool IsImageUploaded { get; set; }
     }
 }

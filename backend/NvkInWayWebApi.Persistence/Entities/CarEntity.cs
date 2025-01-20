@@ -18,6 +18,8 @@ public partial class CarEntity
 
     public virtual DriverEntity Driver { get; set; } = null!;
 
+    public bool ImageUploaded { get; set; } = false;
+
     public virtual ICollection<TripEntity> Trips { get; set; } = new List<TripEntity>();
 
     public static Car MapFrom(CarEntity carEntity)
@@ -28,7 +30,8 @@ public partial class CarEntity
             Name = carEntity.Name,
             Number = carEntity.Number,
             Color = carEntity.Color,
-            DriverId = carEntity.DriverId
+            DriverId = carEntity.DriverId,
+            IsImageUploaded = carEntity.ImageUploaded
         };
     }
 
@@ -40,7 +43,8 @@ public partial class CarEntity
             Name = car.Name,
             Number = car.Number,
             Color = car.Color,
-            DriverId = car.DriverId
+            DriverId = car.DriverId,
+            ImageUploaded = car.IsImageUploaded
         };
     }
 }

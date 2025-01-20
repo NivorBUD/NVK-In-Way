@@ -18,6 +18,28 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return OperationResult.Success(201);
         }
 
+        public async Task<OperationResult> SetCarImageIsUploadedAsync(Guid carId)
+        {
+            var car = await _context.Set<CarEntity>().FirstOrDefaultAsync(c => c.Id == carId);
+            if (car == null)
+                return OperationResult.Error("Машина не найдена");
+
+            car.ImageUploaded = true;
+            await _context.SaveChangesAsync();
+            return OperationResult.Success(204);
+        }
+
+        public async Task<OperationResult> SetCarImageIsUnUploadedAsync(Guid carId)
+        {
+            var car = await _context.Set<CarEntity>().FirstOrDefaultAsync(c => c.Id == carId);
+            if (car == null)
+                return OperationResult.Error("Машина не найдена");
+
+            car.ImageUploaded = false;
+            await _context.SaveChangesAsync();
+            return OperationResult.Success(204);
+        }
+
         public async Task<OperationResult> DeleteDriverAsync(long profileId)
         {
             var driver = await _dbSet.FirstOrDefaultAsync(d => d.TgProfileId == profileId);
@@ -42,6 +64,16 @@ namespace NvkInWayWebApi.Persistence.Repositories
             var profile = MapFrom(dbEntity);
 
             return OperationResult<DriverProfile>.Success(profile);
+        }
+
+        public async Task<OperationResult<Car>> GetCarByIdAsync(Guid carId)
+        {
+            var car = await _context.Set<CarEntity>()
+                .FirstOrDefaultAsync(c => c.Id == carId);
+            if (car == null)
+                return OperationResult<Car>.Error("Машина не найдена");
+
+            return OperationResult<Car>.Success(MapFrom(car));
         }
 
         public async Task<OperationResult> UpdateDriverCarsAsync(long driverId, List<Car> cars)
@@ -210,7 +242,8 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 DriverId = carEntity.DriverId,
                 Name = carEntity.Name,
                 Number = carEntity.Number,
-                Color = carEntity.Color
+                Color = carEntity.Color,
+                IsImageUploaded = carEntity.ImageUploaded
             };
         }
 
@@ -222,7 +255,8 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 DriverId = carEntity.DriverId,
                 Name = carEntity.Name,
                 Number = carEntity.Number,
-                Color = carEntity.Color
+                Color = carEntity.Color,
+                ImageUploaded = carEntity.IsImageUploaded
             };
         }
     }

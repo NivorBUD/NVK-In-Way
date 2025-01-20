@@ -7,6 +7,8 @@ using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.Interfaces;
 using NvkInWayWebApi.Application.Services;
 using System.Reflection;
+using NvkInWayWebApi.Application.ImageService.Interfaces;
+using NvkInWayWebApi.Application.ImageService.Profiles;
 
 namespace NvkInWayWebApi.Application
 {
@@ -45,6 +47,16 @@ namespace NvkInWayWebApi.Application
                 {
                     config.RegisterValidatorsFromAssembly(Assembly.GetExecutingAssembly());
                 });
+
+            return services;
+        }
+
+        public static IServiceCollection RegisterImageService(this IServiceCollection services)
+        {
+            //профили сохранения изображений
+            services.AddTransient<IImageProfile, CompressedCarProfile>();
+
+            services.AddScoped<ImageService.ImageService>();
 
             return services;
         }
