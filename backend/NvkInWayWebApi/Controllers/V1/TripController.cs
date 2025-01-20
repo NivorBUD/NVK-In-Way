@@ -25,11 +25,11 @@ namespace NvkInWayWebApi.Controllers.V1
         /// </summary>
         /// <param name="profileId">telegram user ID</param>
         /// <returns></returns>
-        [HttpGet("get-driver-trips/{driverId}")]
+        [HttpGet("all-driver-trips/{driverId}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForDriver(long driverId)
         {
             var result = await service.GetTripsByDriverIdAsync(driverId);
 
@@ -44,11 +44,11 @@ namespace NvkInWayWebApi.Controllers.V1
         /// </summary>
         /// <param name="passengerId">telegram user ID</param>
         /// <returns></returns>
-        [HttpGet("get-passenger-trips/{passengerId}")]
+        [HttpGet("all-passenger-trips/{passengerId}")]
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForPassenger(long passengerId)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForPassenger(long passengerId)
         {
             var result = await service.GetTripsByPassengerIdAsync(passengerId);
 

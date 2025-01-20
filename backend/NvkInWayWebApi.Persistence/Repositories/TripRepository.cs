@@ -93,6 +93,13 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         public async Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId)
         {
+            var passengerEntity = await _context.Set<DriverEntity>()
+                .Include(p => p.Records)
+                .FirstOrDefaultAsync(p => p.TgProfileId == driverId);
+
+            if (passengerEntity == null)
+                return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
+
             var tripEntities = await _context.Set<TripEntity>()
                 .Include(d => d.Driver)
                 .Include(t => t.Car)
