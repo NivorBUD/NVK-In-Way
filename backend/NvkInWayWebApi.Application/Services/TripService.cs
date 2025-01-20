@@ -76,6 +76,20 @@ namespace NvkInWayWebApi.Application.Services
             return OperationResult<List<GetActiveTripsResDto>>.Success(resDto);
         }
 
+        public async Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByPassengerIdAsync(long passengerId)
+        {
+            var tripResult = await repository.GetTripsByPassengerIdAsync(passengerId);
+
+            if (!tripResult.IsSuccess)
+                return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
+
+            var resDto = tripResult.Data
+                .Select(t => GetActiveTripsResDto.MapFrom(t))
+                .ToList();
+
+            return OperationResult<List<GetActiveTripsResDto>>.Success(resDto);
+        }
+
         public async Task<OperationResult> UpdateDriverTripAsync(CreateTripReqDto tripReqDto)
         {
             var updatedTrip = new Trip()

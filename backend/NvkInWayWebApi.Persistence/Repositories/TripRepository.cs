@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
+using NvkInWayWebApi.Domain.Models.Profiles;
 using NvkInWayWebApi.Domain.RepositoriesContract;
 using NvkInWayWebApi.Persistence.Entities;
 
@@ -99,6 +100,36 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 .Include(p => p.EndPointNavigation)
                 .Include(t => t.Records)
                 .Where(t => t.Driver.TgProfileId == driverId).ToListAsync();
+
+            if (tripEntities == null)
+                return OperationResult<List<Trip>>.Error("Поездки не найдены");
+
+            var result = new List<Trip>();
+
+            foreach (var tripEntity in tripEntities)
+            {
+                result.Add(TripEntity.MapFrom(tripEntity));
+            }
+
+            return OperationResult<List<Trip>>.Success(result);
+        }
+
+        public async Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId)
+        {
+            var passengerEntity = await _context.Set<PassengerEntity>()
+                .Include(p => p.Records)
+                .FirstOrDefaultAsync(p => p.TgProfileId == passengerId);
+
+            if (passengerEntity == null)
+                return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
+
+            var tripEntities = await _context.Set<TripEntity>()
+                .Include(d => d.Driver)
+                .Include(t => t.Car)
+                .Include(p => p.StartPointNavigation)
+                .Include(p => p.EndPointNavigation)
+                .Include(t => t.Records)
+                .Where(t => t.Records.Any(record => record.PassengerId == passengerId)).ToListAsync();
 
             if (tripEntities == null)
                 return OperationResult<List<Trip>>.Error("Поездки не найдены");

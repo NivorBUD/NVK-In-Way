@@ -164,6 +164,12 @@ namespace NvkInWayWebApi.Controllers
             return Created();
         }
 
+        /// <summary>
+        /// Upload an image of the driver's car
+        /// </summary>
+        /// <param name="file">The image file</param>
+        /// <param name="carId">The car id</param>
+        /// <returns></returns>
         [HttpPost("upload-car-image")]
         public async Task<ActionResult> UploadCarImage(IFormFile file, [FromForm] Guid carId)
         {
@@ -198,6 +204,11 @@ namespace NvkInWayWebApi.Controllers
             }
         }
 
+        /// <summary>
+        /// Download an image of the driver's car, or return the standard image if not
+        /// </summary>
+        /// <param name="carId">The car id</param>
+        /// <returns></returns>
         [HttpGet("download-car-image/{carId}")]
         public async Task<IActionResult> DownloadCarImage([FromRoute] Guid carId)
         {

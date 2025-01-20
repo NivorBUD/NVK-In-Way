@@ -12,6 +12,8 @@ namespace NvkInWayWebApi.Application.Interfaces
 
         public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByDriverIdAsync(long driverId);
 
+        public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByPassengerIdAsync(long passengerId);
+
         public Task<OperationResult<GetActiveTripsResDto>> GetTripById(Guid id);
 
         public Task<OperationResult> AddDriverTripAsync(CreateTripReqDto tripReqDto);
