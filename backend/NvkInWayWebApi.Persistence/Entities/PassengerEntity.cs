@@ -6,9 +6,9 @@ public partial class PassengerEntity
 
     public int TripsCount { get; set; }
 
-    public double? Rating { get; set; }
+    public float? Rating { get; set; }
 
-    public double TotalRating { get; set; }
+    public float TotalRating { get; set; }
 
     public int RatingCount { get; set; }
 

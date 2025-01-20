@@ -21,6 +21,6 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
 
         public Task<OperationResult> CompleteTripAsync(Trip trip);
 
-        public Task<OperationResult> RateParticipantAsync(Guid tripId, long raterId, double rating);
+        public Task<OperationResult> RateParticipantAsync(Guid tripId, long raterId, long targetId, float rating);
     }
 }

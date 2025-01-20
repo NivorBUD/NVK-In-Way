@@ -223,7 +223,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             }
         }
 
-        public async Task<OperationResult> RateParticipantAsync(Guid tripId, long raterId, double rating)
+        public async Task<OperationResult> RateParticipantAsync(Guid tripId, long raterId, long targetId, float rating)
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
             try
@@ -239,27 +239,39 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 if (!isParticipant)
                     return OperationResult.Error("Вы не являетесь участником этой поездки.");
 
+                var hasTarget = trip.Records.Any(t => t.PassengerId == targetId) || trip.DriverId == targetId;
+                if (!hasTarget)
+                    return OperationResult.Error("Не найден цель оценки рейтинга");
+
                 var isPassenger = trip.Records.Any(p => p.PassengerId == raterId);
 
                 if (isPassenger)
                 {
-                    var passenger = await _context.Set<PassengerEntity>().FirstOrDefaultAsync(p => p.TgProfileId == raterId);
-                    if (passenger == null)
+                    var passengerRaterId = await _context.Set<PassengerEntity>().FirstOrDefaultAsync(p => p.TgProfileId == raterId);
+                    if (passengerRaterId == null)
                         return OperationResult.Error($"Пользователь с ID {raterId} не найден.");
 
-                    passenger.RatingCount++;
-                    passenger.TotalRating += rating;
-                    passenger.Rating = passenger.TotalRating / passenger.RatingCount;
+                    var driverTargetId = await _context.Set<DriverEntity>().FirstOrDefaultAsync(p => p.TgProfileId == targetId);
+                    if (driverTargetId == null)
+                        return OperationResult.Error($"Пользователь с ID {targetId} не найден.");
+
+                    driverTargetId.RatingCount++;
+                    driverTargetId.TotalRating += rating;
+                    driverTargetId.Rating = driverTargetId.TotalRating / driverTargetId.RatingCount;
                 }
                 else
                 {
-                    var driver = await _context.Set<DriverEntity>().FirstOrDefaultAsync(p => p.TgProfileId == raterId);
-                    if (driver == null)
+                    var driverTargetId = await _context.Set<DriverEntity>().FirstOrDefaultAsync(p => p.TgProfileId == raterId);
+                    if (driverTargetId == null)
                         return OperationResult.Error($"Пользователь с ID {raterId} не найден.");
 
-                    driver.RatingCount++;
-                    driver.TotalRating += rating;
-                    driver.Rating = driver.TotalRating / driver.RatingCount;
+                    var passengerTagetId = await _context.Set<PassengerEntity>().FirstOrDefaultAsync(p => p.TgProfileId == targetId);
+                    if (passengerTagetId == null)
+                        return OperationResult.Error($"Пользователь с ID {targetId} не найден.");
+
+                    passengerTagetId.RatingCount++;
+                    passengerTagetId.TotalRating += rating;
+                    passengerTagetId.Rating = passengerTagetId.TotalRating / passengerTagetId.RatingCount;
                 }
 
                 await SaveChangesAsync();

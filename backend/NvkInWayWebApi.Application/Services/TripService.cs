@@ -132,7 +132,7 @@ namespace NvkInWayWebApi.Application.Services
 
         public async Task<OperationResult> RateParticipantAsync(SetRatingReqDto setRatingReqDto)
         {
-            return await repository.RateParticipantAsync(setRatingReqDto.TripId, setRatingReqDto.UserId, setRatingReqDto.Rating);
+            return await repository.RateParticipantAsync(setRatingReqDto.TripId, setRatingReqDto.RaterId, setRatingReqDto.TargetId, setRatingReqDto.Rating);
         }
     }
 }
