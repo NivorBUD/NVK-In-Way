@@ -4,7 +4,7 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos
 {
     public class PassengerShortResDto
     {
-        public float? Rating { get; set; }
+        public double? Rating { get; set; }
 
         public int TripsCount { get; set; }
 

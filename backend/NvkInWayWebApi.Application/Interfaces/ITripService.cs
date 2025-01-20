@@ -1,5 +1,4 @@
-﻿using NvkInWayWebApi.Application.Common.Dtos.CarTrip;
-using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
+﻿using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Domain;
@@ -22,5 +21,9 @@ namespace NvkInWayWebApi.Application.Interfaces
         public Task<OperationResult> DeleteTripAsync(Guid trip);
 
         public Task<OperationResult> RecordToTrip(RecordReqDto recordReqDto);
+
+        public Task<OperationResult> CompleteTripAsync(EndTripReqDto endTripReqDto);
+
+        public Task<OperationResult> RateParticipantAsync(SetRatingReqDto setRatingReqDto);
     }
 }

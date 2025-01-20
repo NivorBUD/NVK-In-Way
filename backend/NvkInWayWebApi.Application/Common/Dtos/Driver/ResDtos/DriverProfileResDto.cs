@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
+﻿using NvkInWayWebApi.Application.Common.Dtos.General.ResDtos;
 using NvkInWayWebApi.Domain.Models.Profiles;
 
 namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos
@@ -14,7 +9,7 @@ namespace NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos
 
         public long TgProfileId { get; set; }
 
-        public float? Rating { get; set; }
+        public double? Rating { get; set; }
 
         public int AllTripsCount { get; set; }
 

@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
-using NvkInWayWebApi.Application.Common.Dtos.Driver.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
-using NvkInWayWebApi.Application.Common.Dtos.Passenger.ResDtos;
 using NvkInWayWebApi.Application.Interfaces;
 
 namespace NvkInWayWebApi.Controllers.V1
@@ -121,5 +119,34 @@ namespace NvkInWayWebApi.Controllers.V1
 
             return Created();
         }
+
+        [HttpPost("complete-trip")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> CompleteTrip(EndTripReqDto endTripReqDto)
+        {
+            var result = await service.CompleteTripAsync(endTripReqDto);
+
+            if (!result.IsSuccess)
+                return BadRequest(new MyResponseMessage(result.ErrorText));
+
+            return Ok();
+        }
+
+        [HttpPost("rate-users")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> RateParticipants([FromBody] SetRatingReqDto rating)
+        {
+            var result = await service.RateParticipantAsync(rating);
+
+            if (!result.IsSuccess)
+                return BadRequest(new MyResponseMessage(result.ErrorText));
+
+            return Ok();
+        }
+
     }
 }

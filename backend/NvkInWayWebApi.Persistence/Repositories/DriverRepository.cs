@@ -182,7 +182,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             {
                 TgProfileId = profile.TgProfileId,
                 Rating = profile.Rating,
-                AllTripsCount = profile.TripsCount,
+                TripsCount = profile.TripsCount,
                 Cars = profile.Cars
                     .Select(c => MapFrom(c))
                     .ToList(),
@@ -195,7 +195,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             {
                 TgProfileId = driverEntity.TgProfileId,
                 Rating = driverEntity.Rating,
-                TripsCount = driverEntity.AllTripsCount,
+                TripsCount = driverEntity.TripsCount,
                 Cars = driverEntity.Cars
                     .Select(c => MapFrom(c))
                     .ToList(),

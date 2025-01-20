@@ -44,15 +44,15 @@ namespace NvkInWayWebApi.Application.Services
             return OperationResult.Success();
         }
 
-        
+
         public async Task<OperationResult<List<ShortActiveTripResDto>>> GetShortTripInfoByIntervalAsync(
             IntervalSearchReqDto searchDto, int startIndex, int count)
         {
             var domainSearchInterval = IntervalSearchReqDto.MapFrom(searchDto);
-            
+
             var repositoryResult = await repository.GetTripsByIntervalAsync(domainSearchInterval, startIndex, count);
 
-            if(!repositoryResult.IsSuccess)
+            if (!repositoryResult.IsSuccess)
                 return OperationResult<List<ShortActiveTripResDto>>.Error("Ошибка поиска поездок по интервалу");
 
             var shortInfo = repositoryResult.Data
@@ -117,6 +117,22 @@ namespace NvkInWayWebApi.Application.Services
             };
 
             return await repository.RecordToTripAsync(record);
+        }
+
+        public async Task<OperationResult> CompleteTripAsync(EndTripReqDto endTripReqDto)
+        {
+            var endTrip = new Trip
+            {
+                Id = endTripReqDto.TripId,
+                DriverId = endTripReqDto.DriverId
+            };
+
+            return await repository.CompleteTripAsync(endTrip);
+        }
+
+        public async Task<OperationResult> RateParticipantAsync(SetRatingReqDto setRatingReqDto)
+        {
+            return await repository.RateParticipantAsync(setRatingReqDto.TripId, setRatingReqDto.UserId, setRatingReqDto.Rating);
         }
     }
 }

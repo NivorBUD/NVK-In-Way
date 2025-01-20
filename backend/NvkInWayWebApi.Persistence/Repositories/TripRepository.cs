@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
 using NvkInWayWebApi.Domain.RepositoriesContract;
@@ -181,6 +180,101 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
             return OperationResult.Success(204);
         }
+
+        public async Task<OperationResult> CompleteTripAsync(Trip endTrip)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var trip = await _context.Set<TripEntity>()
+                    .Include(t => t.Records)
+                    .FirstOrDefaultAsync(t => t.Id == endTrip.Id);
+
+                if (trip == null)
+                    return OperationResult.Error("Поездка не найдена.");
+
+                if (trip.DriverId != endTrip.DriverId)
+                    return OperationResult.Error("Только водитель может завершить поездку.");
+
+                var participantIds = trip.Records.Select(r => r.PassengerId).ToList();
+
+                await _context.Set<PassengerEntity>()
+                    .Where(p => participantIds.Contains(p.TgProfileId))
+                    .ForEachAsync(p => p.TripsCount++);
+
+                var driver = await _context.Set<DriverEntity>()
+                    .FirstOrDefaultAsync(d => d.TgProfileId == trip.DriverId);
+                if (driver != null)
+                {
+                    driver.TripsCount++;
+                }
+
+                trip.DriveEndTime = DateTime.UtcNow;
+
+                await SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return OperationResult.Success(200);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return OperationResult.Error("Ошибка завершения поездки: " + ex.Message);
+            }
+        }
+
+        public async Task<OperationResult> RateParticipantAsync(Guid tripId, long raterId, double rating)
+        {
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                var trip = await _context.Set<TripEntity>()
+                    .Include(t => t.Records)
+                    .FirstOrDefaultAsync(t => t.Id == tripId);
+
+                if (trip == null)
+                    return OperationResult.Error("Поездка не найдена.");
+
+                var isParticipant = trip.Records.Any(r => r.PassengerId == raterId) || trip.DriverId == raterId;
+                if (!isParticipant)
+                    return OperationResult.Error("Вы не являетесь участником этой поездки.");
+
+                var isPassenger = trip.Records.Any(p => p.PassengerId == raterId);
+
+                if (isPassenger)
+                {
+                    var passenger = await _context.Set<PassengerEntity>().FirstOrDefaultAsync(p => p.TgProfileId == raterId);
+                    if (passenger == null)
+                        return OperationResult.Error($"Пользователь с ID {raterId} не найден.");
+
+                    passenger.RatingCount++;
+                    passenger.TotalRating += rating;
+                    passenger.Rating = passenger.TotalRating / passenger.RatingCount;
+                }
+                else
+                {
+                    var driver = await _context.Set<DriverEntity>().FirstOrDefaultAsync(p => p.TgProfileId == raterId);
+                    if (driver == null)
+                        return OperationResult.Error($"Пользователь с ID {raterId} не найден.");
+
+                    driver.RatingCount++;
+                    driver.TotalRating += rating;
+                    driver.Rating = driver.TotalRating / driver.RatingCount;
+                }
+
+                await SaveChangesAsync();
+                await transaction.CommitAsync();
+
+                return OperationResult.Success(200);
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return OperationResult.Error("Ошибка сохранения оценок: " + ex.Message);
+            }
+        }
+
+
 
         public Task<OperationResult> UpdateTripAsync(Trip trip)
         {

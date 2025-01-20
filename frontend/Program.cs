@@ -1,10 +1,8 @@
-﻿using System;
-using Telegram.Bot;
+﻿using Telegram.Bot;
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.Enums;
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace TGBotNVK;
 
@@ -20,7 +18,7 @@ class Program
 
     static async Task Main()
     {
-        _botClient = new TelegramBotClient("7563082499:AAG_9wHRaKIso0-u-9Osgmgy9xzsCOLjc1k");
+        _botClient = new TelegramBotClient("8197866349:AAHs9I0YwiTo5QfBchG0-Q5X2eNMbNA-Q6U");
         //_botClient = new TelegramBotClient("8026874216:AAEOlGPMXT_IjX4GvctMpFm044q8tB2C2fc");
         _receiverOptions = new ReceiverOptions
         {

@@ -43,7 +43,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             }
 
             existingPassenger.Rating = passenger.Rating;
-            existingPassenger.TripCount = passenger.TripsCount;
+            existingPassenger.TripsCount = passenger.TripsCount;
 
             await SaveChangesAsync();
             return OperationResult.Success(201);
@@ -67,7 +67,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return new PassengerEntity
             {
                 TgProfileId = passengerProfile.TgProfileId,
-                TripCount = passengerProfile.TripsCount,
+                TripsCount = passengerProfile.TripsCount,
                 Rating = passengerProfile.Rating,
             };
         }
@@ -77,7 +77,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return new PassengerProfile
             {
                 TgProfileId = passengerProfile.TgProfileId,
-                TripsCount = passengerProfile.TripCount,
+                TripsCount = passengerProfile.TripsCount,
                 Rating = passengerProfile.Rating,
             };
         }

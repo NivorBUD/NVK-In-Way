@@ -62,9 +62,11 @@ public partial class NvkInWayContext : DbContext
 
             entity.ToTable("drivers");
 
-            entity.Property(e => e.AllTripsCount).HasColumnName("all_trips_count");
+            entity.Property(e => e.TripsCount).HasColumnName("trips_count");
             entity.Property(e => e.Rating).HasColumnName("rating");
             entity.Property(e => e.TgProfileId).HasColumnName("tg_profile_id");
+            entity.Property(e => e.RatingCount).HasColumnName("rating_count");
+            entity.Property(e => e.TotalRating).HasColumnName("total_rating");
         });
 
         modelBuilder.Entity<LocationEntity>(entity =>
@@ -86,7 +88,9 @@ public partial class NvkInWayContext : DbContext
 
             entity.Property(e => e.Rating).HasColumnName("rating");
 
-            entity.Property(e => e.TripCount).HasColumnName("trip_count");
+            entity.Property(e => e.TripsCount).HasColumnName("trips_count");
+            entity.Property(e => e.RatingCount).HasColumnName("rating_count");
+            entity.Property(e => e.TotalRating).HasColumnName("total_rating");
         });
 
         modelBuilder.Entity<RecordEntity>(entity =>

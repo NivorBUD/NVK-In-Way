@@ -1,15 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NvkInWayWebApi.Persistence.Entities;
+﻿namespace NvkInWayWebApi.Persistence.Entities;
 
 public partial class DriverEntity
 {
     public long TgProfileId { get; set; }
 
-    public float? Rating { get; set; }
+    public double? Rating { get; set; }
 
-    public int AllTripsCount { get; set; }
+    public int TripsCount { get; set; }
+
+    public double TotalRating { get; set; }
+
+    public int RatingCount { get; set; }
+
 
     public virtual ICollection<CarEntity> Cars { get; set; } = new List<CarEntity>();
 
