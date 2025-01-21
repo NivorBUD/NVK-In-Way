@@ -4,13 +4,13 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
 {
     public interface ITripRepository
     {
-        public Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId);
+        public Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId, int startIndex, int count);
 
-        public Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId);
+        public Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId, int startIndex, int count);
 
-        public Task<OperationResult<List<Trip>>> GetActiveTripsByDriverIdAsync(long driverId);
+        public Task<OperationResult<List<Trip>>> GetActiveTripsByDriverIdAsync(long driverId, int startIndex, int count);
 
-        public Task<OperationResult<List<Trip>>> GetActiveTripsByPassengerIdAsync(long passengerId);
+        public Task<OperationResult<List<Trip>>> GetActiveTripsByPassengerIdAsync(long passengerId, int startIndex, int count);
 
         public Task<OperationResult<List<Trip>>> GetTripsByIntervalAsync(
             TripSearchInterval searchDto, int startIndex, int count);

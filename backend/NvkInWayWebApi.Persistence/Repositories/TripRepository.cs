@@ -76,7 +76,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         public async Task<OperationResult<Trip>> GetTripByTripIdAsync(Guid tripId)
         {
-            var trips = await GetTripsByPredicateAsync(t => t.Id == tripId);
+            var trips = await GetTripsByPredicateAsync(0, 1, t => t.Id == tripId);
             var trip = trips.FirstOrDefault();
 
             if (trip == null)
@@ -85,7 +85,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             return OperationResult<Trip>.Success(trip);
         }
 
-        public async Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId)
+        public async Task<OperationResult<List<Trip>>> GetTripsByDriverIdAsync(long driverId, int startIndex, int count)
         {
             var passengerEntity = await _context.Set<DriverEntity>()
                 .Include(p => p.Records)
@@ -94,12 +94,12 @@ namespace NvkInWayWebApi.Persistence.Repositories
             if (passengerEntity == null)
                 return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            var trips = await GetTripsByPredicateAsync(t => t.Driver.TgProfileId == driverId);
+            var trips = await GetTripsByPredicateAsync(startIndex, count, t => t.Driver.TgProfileId == driverId);
 
             return OperationResult<List<Trip>>.Success(trips);
         }
 
-        public async Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId)
+        public async Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId, int startIndex, int count)
         {
             var passengerEntity = await _context.Set<PassengerEntity>()
                 .Include(p => p.Records)
@@ -108,12 +108,13 @@ namespace NvkInWayWebApi.Persistence.Repositories
             if (passengerEntity == null)
                 return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            var trips = await GetTripsByPredicateAsync(t => t.Records.Any(record => record.PassengerId == passengerId));
+            var trips = await GetTripsByPredicateAsync(
+                startIndex, count, t => t.Records.Any(record => record.PassengerId == passengerId));
 
             return OperationResult<List<Trip>>.Success(trips);
         }
 
-        public async Task<OperationResult<List<Trip>>> GetActiveTripsByDriverIdAsync(long driverId)
+        public async Task<OperationResult<List<Trip>>> GetActiveTripsByDriverIdAsync(long driverId, int startIndex, int count)
         {
             var passengerEntity = await _context.Set<DriverEntity>()
                 .Include(p => p.Records)
@@ -122,13 +123,13 @@ namespace NvkInWayWebApi.Persistence.Repositories
             if (passengerEntity == null)
                 return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            var trips = await GetTripsByPredicateAsync(
+            var trips = await GetTripsByPredicateAsync(startIndex, count,
                 t => t.Driver.TgProfileId == driverId && t.DriveEndTime > DateTimeOffset.UtcNow);
 
             return OperationResult<List<Trip>>.Success(trips);
         }
 
-        public async Task<OperationResult<List<Trip>>> GetActiveTripsByPassengerIdAsync(long passengerId)
+        public async Task<OperationResult<List<Trip>>> GetActiveTripsByPassengerIdAsync(long passengerId, int startIndex, int count)
         {
             var passengerEntity = await _context.Set<PassengerEntity>()
                 .Include(p => p.Records)
@@ -137,7 +138,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
             if (passengerEntity == null)
                 return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            var trips = await GetTripsByPredicateAsync(
+            var trips = await GetTripsByPredicateAsync(startIndex, count,
                 t => t.Records.Any(record => record.PassengerId == passengerId) && t.DriveEndTime > DateTimeOffset.UtcNow);
 
             return OperationResult<List<Trip>>.Success(trips);
@@ -329,25 +330,21 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         #region Helpers
 
-        private async Task<List<Trip>> GetTripsByPredicateAsync(Expression<Func<TripEntity, bool>> tripPredicate)
+        private async Task<List<Trip>> GetTripsByPredicateAsync(int startIndex, int count, Expression<Func<TripEntity, bool>> tripPredicate)
         {
-            var tripEntities = await _context.Set<TripEntity>()
+            var trips = await _context.Set<TripEntity>()
                 .Include(d => d.Driver)
                 .Include(t => t.Car)
                 .Include(p => p.StartPointNavigation)
                 .Include(p => p.EndPointNavigation)
                 .Include(t => t.Records)
                 .Where(tripPredicate)
+                .Skip(startIndex)
+                .Take(count)
+                .Select(c => TripEntity.MapFrom(c))
                 .ToListAsync();
 
-            var result = new List<Trip>();
-
-            foreach (var tripEntity in tripEntities)
-            {
-                result.Add(TripEntity.MapFrom(tripEntity));
-            }
-
-            return result;
+            return trips;
         }
 
         public RecordEntity MapFrom(Record record)

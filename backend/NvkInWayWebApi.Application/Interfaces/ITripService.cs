@@ -10,13 +10,17 @@ namespace NvkInWayWebApi.Application.Interfaces
         public Task<OperationResult<List<ShortActiveTripResDto>>> GetShortTripInfoByIntervalAsync(
             IntervalSearchReqDto searchDto, int startIndex, int count);
 
-        public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByDriverIdAsync(long driverId);
+        public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByDriverIdAsync(
+            long driverId, int startIndex, int count);
 
-        public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByPassengerIdAsync(long passengerId);
+        public Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByPassengerIdAsync(
+            long passengerId, int startIndex, int count);
 
-        public Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByDriverIdAsync(long driverId);
-
-        public Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByPassengerIdAsync(long passengerId);
+        public Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByDriverIdAsync(
+            long driverId, int startIndex, int count);
+            
+        public Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByPassengerIdAsync(
+            long passengerId, int startIndex, int count);
 
         public Task<OperationResult<GetActiveTripsResDto>> GetTripById(Guid id);
 

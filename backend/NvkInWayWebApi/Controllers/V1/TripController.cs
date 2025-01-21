@@ -29,9 +29,9 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForDriver(long driverId)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForDriver(long driverId, int startIndex, int count)
         {
-            var result = await service.GetTripsByDriverIdAsync(driverId);
+            var result = await service.GetTripsByDriverIdAsync(driverId, startIndex, count);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -48,9 +48,9 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForPassenger(long passengerId)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForPassenger(long passengerId, int startIndex, int count)
         {
-            var result = await service.GetTripsByPassengerIdAsync(passengerId);
+            var result = await service.GetTripsByPassengerIdAsync(passengerId, startIndex, count);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -67,9 +67,9 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId, int startIndex, int count)
         {
-            var result = await service.GetActiveTripsByDriverIdAsync(driverId);
+            var result = await service.GetActiveTripsByDriverIdAsync(driverId, startIndex, count);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
@@ -86,9 +86,9 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForPassenger(long passengerId)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForPassenger(long passengerId, int startIndex, int count)
         {
-            var result = await service.GetActiveTripsByPassengerIdAsync(passengerId);
+            var result = await service.GetActiveTripsByPassengerIdAsync(passengerId, startIndex, count);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
