@@ -76,18 +76,11 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
         public async Task<OperationResult<Trip>> GetTripByTripIdAsync(Guid tripId)
         {
-            var dbTrip = await _dbSet
-                    .Include(d => d.Driver)
-                    .Include(t => t.Car)
-                    .Include(p => p.StartPointNavigation)
-                    .Include(p => p.EndPointNavigation)
-                    .Include(t => t.Records)
-                    .FirstOrDefaultAsync(t => t.Id == tripId);
+            var trips = await GetTripsByPredicateAsync(t => t.Id == tripId);
+            var trip = trips.FirstOrDefault();
 
-            if (dbTrip == null)
+            if (trip == null)
                 return OperationResult<Trip>.Error("Поездка с таким идентификатором не была обнаружена");
-
-            var trip = TripEntity.MapFrom(dbTrip);
 
             return OperationResult<Trip>.Success(trip);
         }
@@ -344,7 +337,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 .Include(p => p.StartPointNavigation)
                 .Include(p => p.EndPointNavigation)
                 .Include(t => t.Records)
-                .Where(tr)
+                .Where(tripPredicate)
                 .ToListAsync();
 
             var result = new List<Trip>();
