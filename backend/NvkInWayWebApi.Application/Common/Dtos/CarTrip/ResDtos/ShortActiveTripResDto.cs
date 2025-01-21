@@ -29,8 +29,8 @@ namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos
                 Id = trip.Id,
                 StartPoint = LocationResDto.MapFrom(trip.StartPoint),
                 EndPoint = LocationResDto.MapFrom(trip.EndPoint),
-                TripStartTime = trip.StartTime,
-                TripEndTime = trip.EndTime,
+                TripStartTime = trip.StartTime.LocalDateTime,
+                TripEndTime = trip.EndTime.LocalDateTime,
                 FreePlaces = trip.TotalPlaces - trip.BookedPlaces
             };
         }

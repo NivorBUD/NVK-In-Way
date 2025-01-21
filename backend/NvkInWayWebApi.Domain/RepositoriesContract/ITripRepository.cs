@@ -8,6 +8,10 @@ namespace NvkInWayWebApi.Domain.RepositoriesContract
 
         public Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId);
 
+        public Task<OperationResult<List<Trip>>> GetActiveTripsByDriverIdAsync(long driverId);
+
+        public Task<OperationResult<List<Trip>>> GetActiveTripsByPassengerIdAsync(long passengerId);
+
         public Task<OperationResult<List<Trip>>> GetTripsByIntervalAsync(
             TripSearchInterval searchDto, int startIndex, int count);
 

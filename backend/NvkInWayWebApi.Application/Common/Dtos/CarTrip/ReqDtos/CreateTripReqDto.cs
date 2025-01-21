@@ -9,9 +9,9 @@ namespace NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos
 
         public LocationReqDto EndPoint { get; set; }
 
-        public DateTime DriveStartTime { get; set; }
+        public DateTimeOffset DriveStartTime { get; set; }
 
-        public DateTime DriveEndTime { get; set; }
+        public DateTimeOffset DriveEndTime { get; set; }
 
         public int TotalPlaces { get; set; }
 

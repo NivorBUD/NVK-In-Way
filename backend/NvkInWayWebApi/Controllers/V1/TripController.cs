@@ -21,7 +21,7 @@ namespace NvkInWayWebApi.Controllers.V1
         }
 
         /// <summary>
-        /// Returns all active trips for the driver
+        /// Returns all trips for the driver
         /// </summary>
         /// <param name="profileId">telegram user ID</param>
         /// <returns></returns>
@@ -40,7 +40,7 @@ namespace NvkInWayWebApi.Controllers.V1
         }
 
         /// <summary>
-        /// Returns all active trips for the passenger
+        /// Returns all trips for the passenger
         /// </summary>
         /// <param name="passengerId">telegram user ID</param>
         /// <returns></returns>
@@ -51,6 +51,44 @@ namespace NvkInWayWebApi.Controllers.V1
         public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForPassenger(long passengerId)
         {
             var result = await service.GetTripsByPassengerIdAsync(passengerId);
+
+            if (!result.IsSuccess)
+                return BadRequest(new MyResponseMessage(result.ErrorText));
+
+            return Ok(result.Data);
+        }
+
+        /// <summary>
+        /// Returns active trips for the driver
+        /// </summary>
+        /// <param name="profileId">telegram user ID</param>
+        /// <returns></returns>
+        [HttpGet("active-driver-trips/{driverId}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId)
+        {
+            var result = await service.GetActiveTripsByDriverIdAsync(driverId);
+
+            if (!result.IsSuccess)
+                return BadRequest(new MyResponseMessage(result.ErrorText));
+
+            return Ok(result.Data);
+        }
+
+        /// <summary>
+        /// Returns active trips for the passenger
+        /// </summary>
+        /// <param name="passengerId">telegram user ID</param>
+        /// <returns></returns>
+        [HttpGet("active-passenger-trips/{passengerId}")]
+        [Produces("application/json")]
+        [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForPassenger(long passengerId)
+        {
+            var result = await service.GetActiveTripsByPassengerIdAsync(passengerId);
 
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));

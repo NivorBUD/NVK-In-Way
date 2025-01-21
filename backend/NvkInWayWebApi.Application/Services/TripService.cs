@@ -90,6 +90,34 @@ namespace NvkInWayWebApi.Application.Services
             return OperationResult<List<GetActiveTripsResDto>>.Success(resDto);
         }
 
+        public async Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByDriverIdAsync(long driverId)
+        {
+            var tripResult = await repository.GetActiveTripsByDriverIdAsync(driverId);
+
+            if (!tripResult.IsSuccess)
+                return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
+
+            var resDto = tripResult.Data
+                .Select(t => GetActiveTripsResDto.MapFrom(t))
+                .ToList();
+
+            return OperationResult<List<GetActiveTripsResDto>>.Success(resDto);
+        }
+
+        public async Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByPassengerIdAsync(long passengerId)
+        {
+            var tripResult = await repository.GetActiveTripsByPassengerIdAsync(passengerId);
+
+            if (!tripResult.IsSuccess)
+                return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
+
+            var resDto = tripResult.Data
+                .Select(t => GetActiveTripsResDto.MapFrom(t))
+                .ToList();
+
+            return OperationResult<List<GetActiveTripsResDto>>.Success(resDto);
+        }
+
         public async Task<OperationResult> UpdateDriverTripAsync(CreateTripReqDto tripReqDto)
         {
             var updatedTrip = new Trip()

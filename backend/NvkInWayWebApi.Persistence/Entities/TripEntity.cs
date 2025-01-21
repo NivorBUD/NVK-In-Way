@@ -20,9 +20,9 @@ public partial class TripEntity
 
     public string CarLocation { get; set; }
 
-    public DateTime DriveStartTime { get; set; }
+    public DateTimeOffset DriveStartTime { get; set; }
 
-    public DateTime DriveEndTime { get; set; }
+    public DateTimeOffset DriveEndTime { get; set; }
 
     public int TotalPlaces { get; set; }
 
@@ -52,8 +52,8 @@ public partial class TripEntity
             StartPointNavigation = LocationEntity.MapFrom(trip.StartPoint),
             EndPointNavigation = LocationEntity.MapFrom(trip.EndPoint),
             CarLocation = trip.CarLocation,
-            DriveStartTime = trip.StartTime,
-            DriveEndTime = trip.EndTime,
+            DriveStartTime = trip.StartTime.UtcDateTime,
+            DriveEndTime = trip.EndTime.UtcDateTime,
             TotalPlaces = trip.TotalPlaces,
             Costs = trip.Cost,
             BookedPlaces = trip.BookedPlaces
@@ -71,8 +71,8 @@ public partial class TripEntity
             StartPoint = LocationEntity.MapFrom(trip.StartPointNavigation),
             EndPoint = LocationEntity.MapFrom(trip.EndPointNavigation),
             CarLocation = trip.CarLocation,
-            StartTime = trip.DriveStartTime,
-            EndTime = trip.DriveEndTime,
+            StartTime = trip.DriveStartTime.LocalDateTime,
+            EndTime = trip.DriveEndTime.LocalDateTime,
             TotalPlaces = trip.TotalPlaces,
             BookedPlaces = trip.BookedPlaces,
             Cost = trip.Costs

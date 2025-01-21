@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using NvkInWayWebApi.Domain;
 using NvkInWayWebApi.Domain.Models;
 using NvkInWayWebApi.Domain.Models.Profiles;
@@ -100,25 +101,9 @@ namespace NvkInWayWebApi.Persistence.Repositories
             if (passengerEntity == null)
                 return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            var tripEntities = await _context.Set<TripEntity>()
-                .Include(d => d.Driver)
-                .Include(t => t.Car)
-                .Include(p => p.StartPointNavigation)
-                .Include(p => p.EndPointNavigation)
-                .Include(t => t.Records)
-                .Where(t => t.Driver.TgProfileId == driverId).ToListAsync();
+            var trips = await GetTripsByPredicateAsync(t => t.Driver.TgProfileId == driverId);
 
-            if (tripEntities == null)
-                return OperationResult<List<Trip>>.Error("Поездки не найдены");
-
-            var result = new List<Trip>();
-
-            foreach (var tripEntity in tripEntities)
-            {
-                result.Add(TripEntity.MapFrom(tripEntity));
-            }
-
-            return OperationResult<List<Trip>>.Success(result);
+            return OperationResult<List<Trip>>.Success(trips);
         }
 
         public async Task<OperationResult<List<Trip>>> GetTripsByPassengerIdAsync(long passengerId)
@@ -130,25 +115,39 @@ namespace NvkInWayWebApi.Persistence.Repositories
             if (passengerEntity == null)
                 return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            var tripEntities = await _context.Set<TripEntity>()
-                .Include(d => d.Driver)
-                .Include(t => t.Car)
-                .Include(p => p.StartPointNavigation)
-                .Include(p => p.EndPointNavigation)
-                .Include(t => t.Records)
-                .Where(t => t.Records.Any(record => record.PassengerId == passengerId)).ToListAsync();
+            var trips = await GetTripsByPredicateAsync(t => t.Records.Any(record => record.PassengerId == passengerId));
 
-            if (tripEntities == null)
-                return OperationResult<List<Trip>>.Error("Поездки не найдены");
+            return OperationResult<List<Trip>>.Success(trips);
+        }
 
-            var result = new List<Trip>();
+        public async Task<OperationResult<List<Trip>>> GetActiveTripsByDriverIdAsync(long driverId)
+        {
+            var passengerEntity = await _context.Set<DriverEntity>()
+                .Include(p => p.Records)
+                .FirstOrDefaultAsync(p => p.TgProfileId == driverId);
 
-            foreach (var tripEntity in tripEntities)
-            {
-                result.Add(TripEntity.MapFrom(tripEntity));
-            }
+            if (passengerEntity == null)
+                return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
 
-            return OperationResult<List<Trip>>.Success(result);
+            var trips = await GetTripsByPredicateAsync(
+                t => t.Driver.TgProfileId == driverId && t.DriveEndTime > DateTimeOffset.UtcNow);
+
+            return OperationResult<List<Trip>>.Success(trips);
+        }
+
+        public async Task<OperationResult<List<Trip>>> GetActiveTripsByPassengerIdAsync(long passengerId)
+        {
+            var passengerEntity = await _context.Set<PassengerEntity>()
+                .Include(p => p.Records)
+                .FirstOrDefaultAsync(p => p.TgProfileId == passengerId);
+
+            if (passengerEntity == null)
+                return OperationResult<List<Trip>>.Error("Пользователь с таким профилем не найден");
+
+            var trips = await GetTripsByPredicateAsync(
+                t => t.Records.Any(record => record.PassengerId == passengerId) && t.DriveEndTime > DateTimeOffset.UtcNow);
+
+            return OperationResult<List<Trip>>.Success(trips);
         }
 
         public async Task<OperationResult<List<Trip>>> GetTripsByCarIdAsync(Guid carId)
@@ -200,8 +199,14 @@ namespace NvkInWayWebApi.Persistence.Repositories
                 if (tripEntity == null)
                     return OperationResult.Error("Поездка не найдена");
 
-                await _context.Set<RecordEntity>().AddAsync(MapFrom(record));
+                if (tripEntity.BookedPlaces >= tripEntity.TotalPlaces)
+                {
+                    await transaction.RollbackAsync();
+                    return OperationResult.Error("Все места уже забронированы");
+                }
+                tripEntity.BookedPlaces++;
 
+                await _context.Set<RecordEntity>().AddAsync(MapFrom(record));
                 await _context.SaveChangesAsync();
                 await transaction.CommitAsync(); // Завершение транзакции
             }
@@ -324,11 +329,32 @@ namespace NvkInWayWebApi.Persistence.Repositories
             }
         }
 
-
-
         public Task<OperationResult> UpdateTripAsync(Trip trip)
         {
             throw new NotImplementedException();
+        }
+
+        #region Helpers
+
+        private async Task<List<Trip>> GetTripsByPredicateAsync(Expression<Func<TripEntity, bool>> tripPredicate)
+        {
+            var tripEntities = await _context.Set<TripEntity>()
+                .Include(d => d.Driver)
+                .Include(t => t.Car)
+                .Include(p => p.StartPointNavigation)
+                .Include(p => p.EndPointNavigation)
+                .Include(t => t.Records)
+                .Where(tr)
+                .ToListAsync();
+
+            var result = new List<Trip>();
+
+            foreach (var tripEntity in tripEntities)
+            {
+                result.Add(TripEntity.MapFrom(tripEntity));
+            }
+
+            return result;
         }
 
         public RecordEntity MapFrom(Record record)
@@ -343,5 +369,7 @@ namespace NvkInWayWebApi.Persistence.Repositories
 
             return recordEntity;
         }
+
+        #endregion
     }
 }
