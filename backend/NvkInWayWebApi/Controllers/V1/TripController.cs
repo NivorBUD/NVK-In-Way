@@ -4,6 +4,7 @@ using NvkInWayWebApi.Application.Common;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
+using NvkInWayWebApi.Application.Common.ValidationAttributes;
 using NvkInWayWebApi.Application.Interfaces;
 using NvkInWayWebApi.Domain;
 
@@ -30,7 +31,8 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForDriver(long driverId, int startIndex, int count)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForDriver(long driverId,
+            [MustBeNotNegative] int startIndex, [MustBeGreaterThanZero] int count)
         {
             var result = await service.GetTripsByDriverIdAsync(driverId, startIndex, count);
 
@@ -49,7 +51,8 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForPassenger(long passengerId, int startIndex, int count)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetAllTripsForPassenger(long passengerId,
+            [MustBeNotNegative] int startIndex, [MustBeGreaterThanZero] int count)
         {
             var result = await service.GetTripsByPassengerIdAsync(passengerId, startIndex, count);
 
@@ -68,7 +71,8 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId, int startIndex, int count)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForDriver(long driverId,
+            [MustBeNotNegative] int startIndex, [MustBeGreaterThanZero] int count)
         {
             var result = await service.GetActiveTripsByDriverIdAsync(driverId, startIndex, count);
 
@@ -87,7 +91,8 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(typeof(GetActiveTripsResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForPassenger(long passengerId, int startIndex, int count)
+        public async Task<ActionResult<GetActiveTripsResDto>> GetActiveTripsForPassenger(long passengerId,
+            [MustBeNotNegative] int startIndex, [MustBeGreaterThanZero] int count)
         {
             var result = await service.GetActiveTripsByPassengerIdAsync(passengerId, startIndex, count);
 
@@ -148,7 +153,7 @@ namespace NvkInWayWebApi.Controllers.V1
         [ProducesResponseType(typeof(ShortActiveTripResDto), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<List<ShortActiveTripResDto>>> GetShortTripInfoByInterval(
-            [FromBody] IntervalSearchReqDto interval, int startIndex, int count)
+            [FromBody] IntervalSearchReqDto interval, [MustBeNotNegative] int startIndex, [MustBeGreaterThanZero] int count)
         {
             var result = await service.GetShortTripInfoByIntervalAsync(interval, startIndex, count);
 
@@ -210,7 +215,8 @@ namespace NvkInWayWebApi.Controllers.V1
         [Produces("application/json")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<List<NotifyTripResDto>>> GetNotifyingProfilesFromTrips(int startTripIndex, int tripCount)
+        public async Task<ActionResult<List<NotifyTripResDto>>> GetNotifyingProfilesFromTrips([MustBeNotNegative] int startTripIndex,
+            [MustBeNotNegative] int tripCount)
         {
             var result = await service.GetNotifyingProfilesFromTrips(startTripIndex, tripCount);
 
