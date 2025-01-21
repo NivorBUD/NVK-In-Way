@@ -22,6 +22,8 @@
 
         public string CarLocation { get; set; }
 
+        public bool NotifyingProcessed { get; set; }
+
         public Car DriverCar { get; set; }
     }
 }

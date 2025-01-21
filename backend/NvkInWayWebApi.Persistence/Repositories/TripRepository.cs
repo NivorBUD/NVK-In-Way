@@ -323,6 +323,40 @@ namespace NvkInWayWebApi.Persistence.Repositories
             }
         }
 
+        public async Task<OperationResult<Dictionary<Trip, List<long>>>> GetNotifyingProfilesFromTrips(int startTripIndex, int tripCount)
+        {
+            var now = DateTimeOffset.UtcNow;
+            var upcomingTime = now.AddMinutes(30);
+
+            var tripsForNotify = await _dbSet.Where(t => !t.NotifyingProcessed && t.DriveStartTime <= upcomingTime)
+                .Include(t => t.Driver)
+                .Include(t => t.Records)
+                .Include(t => t.StartPointNavigation)
+                .Include(t => t.EndPointNavigation)
+                .Include(t => t.Car)
+                .OrderBy(t => t.DriveStartTime)
+                .Skip(startTripIndex)
+                .Take(tripCount)
+                .ToListAsync();
+
+            foreach (var tripEntity in tripsForNotify)
+                tripEntity.NotifyingProcessed = true;
+
+            var tripUsersDictionary = new Dictionary<Trip, List<long>>();
+
+            foreach (var tripEntity in tripsForNotify)
+            {
+                var userIds = new List<long> { tripEntity.DriverId };
+                userIds.AddRange(tripEntity.Records.Select(r => r.PassengerId));
+
+                var domainTrip = TripEntity.MapFrom(tripEntity);
+                tripUsersDictionary[domainTrip] = userIds;
+            }
+
+            await _context.SaveChangesAsync();
+            return OperationResult<Dictionary<Trip, List<long>>>.Success(tripUsersDictionary);
+        }
+
         public Task<OperationResult> UpdateTripAsync(Trip trip)
         {
             throw new NotImplementedException();

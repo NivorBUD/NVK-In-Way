@@ -5,6 +5,7 @@ using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ReqDtos;
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Application.Interfaces;
+using NvkInWayWebApi.Domain;
 
 namespace NvkInWayWebApi.Controllers.V1
 {
@@ -205,5 +206,18 @@ namespace NvkInWayWebApi.Controllers.V1
             return Ok();
         }
 
+        [HttpGet("notifying-trips")]
+        [Produces("application/json")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<List<NotifyTripResDto>>> GetNotifyingProfilesFromTrips(int startTripIndex, int tripCount)
+        {
+            var result = await service.GetNotifyingProfilesFromTrips(startTripIndex, tripCount);
+
+            if (!result.IsSuccess)
+                return StatusCode(result.StatusCode, new MyResponseMessage(result.ErrorText));
+
+            return Ok(result.Data);
+        }
     }
 }

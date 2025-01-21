@@ -2,6 +2,7 @@
 using NvkInWayWebApi.Application.Common.Dtos.CarTrip.ResDtos;
 using NvkInWayWebApi.Application.Common.Dtos.General.ReqDtos;
 using NvkInWayWebApi.Domain;
+using NvkInWayWebApi.Domain.Models;
 
 namespace NvkInWayWebApi.Application.Interfaces
 {
@@ -35,5 +36,8 @@ namespace NvkInWayWebApi.Application.Interfaces
         public Task<OperationResult> CompleteTripAsync(EndTripReqDto endTripReqDto);
 
         public Task<OperationResult> RateParticipantAsync(SetRatingReqDto setRatingReqDto);
+
+        public Task<OperationResult<List<NotifyTripResDto>>> GetNotifyingProfilesFromTrips(
+            int startTripIndex, int tripCount);
     }
 }

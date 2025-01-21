@@ -200,6 +200,10 @@ public partial class NvkInWayContext : DbContext
                 .HasColumnName("booked_places")
                 .IsRequired(); // Обязательно
 
+            entity.Property(e => e.NotifyingProcessed)
+                .HasColumnName("notify_processed")
+                .HasDefaultValue(false);
+
             // Настройка отношений с другими сущностями
             entity.HasOne(d => d.Car)
                 .WithMany(c => c.Trips)

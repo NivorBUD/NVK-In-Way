@@ -30,6 +30,8 @@ public partial class TripEntity
 
     public double Costs { get; set; }
 
+    public bool NotifyingProcessed { get; set; }
+
     //------------------------------------------------
 
     public virtual CarEntity Car { get; set; } = null!;

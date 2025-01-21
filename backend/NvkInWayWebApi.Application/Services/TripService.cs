@@ -179,5 +179,18 @@ namespace NvkInWayWebApi.Application.Services
         {
             return await repository.RateParticipantAsync(setRatingReqDto.TripId, setRatingReqDto.RaterId, setRatingReqDto.TargetId, setRatingReqDto.Rating);
         }
+
+        public async Task<OperationResult<List<NotifyTripResDto>>> GetNotifyingProfilesFromTrips(int startTripIndex,
+            int tripCount)
+        {
+            var result = await repository.GetNotifyingProfilesFromTrips(startTripIndex, tripCount);
+
+            if (!result.IsSuccess)
+                return OperationResult<List<NotifyTripResDto>>.Error(result.ErrorText);
+
+            return OperationResult<List<NotifyTripResDto>>.Success(result.Data
+                .Select(x => NotifyTripResDto.MapFrom(x))
+                .ToList());
+        }
     }
 }
