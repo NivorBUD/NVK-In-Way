@@ -11,15 +11,30 @@ namespace NvkInWayWebApi.Application.Services
 {
     public class TripService : ITripService
     {
-        private readonly ITripRepository repository;
+        private readonly ITripRepository tripRepository;
 
-        public TripService(ITripRepository tripRepository)
+        private readonly IDriverRepository driverRepository;
+
+        public TripService(ITripRepository tripRepository, IDriverRepository driverRepository)
         {
-            repository = tripRepository;
+            this.tripRepository = tripRepository;
+            this.driverRepository = driverRepository;
         }
 
         public async Task<OperationResult> AddDriverTripAsync(CreateTripReqDto tripReqDto)
         {
+            var driverResult = await driverRepository.GetDriverProfileByIdAsync(tripReqDto.TripCar.DriverId);
+
+            if (!driverResult.IsSuccess)
+            {
+                return OperationResult.Error(driverResult.ErrorText);
+            }
+
+            if (driverResult.Data.Cars.All(car => car.Id != tripReqDto.TripCar.Id))
+            {
+                return OperationResult.Error("У водителя нет такого автомобиля");
+            }
+
             // Добавить преобразование из dto в модель(cделано)
             var newTrip = new Trip()
             {
@@ -34,13 +49,13 @@ namespace NvkInWayWebApi.Application.Services
                 DriverCar = OnlyCarIdsReqDto.MapFrom(tripReqDto.TripCar),
             };
 
-            await repository.AddTripAsync(newTrip);
+            await tripRepository.AddTripAsync(newTrip);
             return OperationResult.Success();
         }
 
         public async Task<OperationResult> DeleteTripAsync(Guid trip)
         {
-            await repository.DeleteTripAsync(trip);
+            await tripRepository.DeleteTripAsync(trip);
             return OperationResult.Success();
         }
 
@@ -50,12 +65,12 @@ namespace NvkInWayWebApi.Application.Services
         {
             var domainSearchInterval = IntervalSearchReqDto.MapFrom(searchDto);
 
-            var repositoryResult = await repository.GetTripsByIntervalAsync(domainSearchInterval, startIndex, count);
+            var tripRepositoryResult = await tripRepository.GetTripsByIntervalAsync(domainSearchInterval, startIndex, count);
 
-            if (!repositoryResult.IsSuccess)
+            if (!tripRepositoryResult.IsSuccess)
                 return OperationResult<List<ShortActiveTripResDto>>.Error("Ошибка поиска поездок по интервалу");
 
-            var shortInfo = repositoryResult.Data
+            var shortInfo = tripRepositoryResult.Data
                 .Select(d => ShortActiveTripResDto.MapFrom(d))
                 .ToList();
 
@@ -64,7 +79,7 @@ namespace NvkInWayWebApi.Application.Services
 
         public async Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByDriverIdAsync(long driverId, int startIndex, int count)
         {
-            var tripResult = await repository.GetTripsByDriverIdAsync(driverId, startIndex, count);
+            var tripResult = await tripRepository.GetTripsByDriverIdAsync(driverId, startIndex, count);
 
             if (!tripResult.IsSuccess)
                 return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
@@ -79,7 +94,7 @@ namespace NvkInWayWebApi.Application.Services
         public async Task<OperationResult<List<GetActiveTripsResDto>>> GetTripsByPassengerIdAsync(
             long passengerId, int startIndex, int count)
         {
-            var tripResult = await repository.GetTripsByPassengerIdAsync(passengerId, startIndex, count);
+            var tripResult = await tripRepository.GetTripsByPassengerIdAsync(passengerId, startIndex, count);
 
             if (!tripResult.IsSuccess)
                 return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
@@ -94,7 +109,7 @@ namespace NvkInWayWebApi.Application.Services
         public async Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByDriverIdAsync(
             long driverId, int startIndex, int count)
         {
-            var tripResult = await repository.GetActiveTripsByDriverIdAsync(driverId, startIndex, count);
+            var tripResult = await tripRepository.GetActiveTripsByDriverIdAsync(driverId, startIndex, count);
 
             if (!tripResult.IsSuccess)
                 return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
@@ -109,7 +124,7 @@ namespace NvkInWayWebApi.Application.Services
         public async Task<OperationResult<List<GetActiveTripsResDto>>> GetActiveTripsByPassengerIdAsync(
             long passengerId, int startIndex, int count)
         {
-            var tripResult = await repository.GetActiveTripsByPassengerIdAsync(passengerId, startIndex, count);
+            var tripResult = await tripRepository.GetActiveTripsByPassengerIdAsync(passengerId, startIndex, count);
 
             if (!tripResult.IsSuccess)
                 return OperationResult<List<GetActiveTripsResDto>>.Error(tripResult.ErrorText);
@@ -135,13 +150,13 @@ namespace NvkInWayWebApi.Application.Services
                 DriverCar = OnlyCarIdsReqDto.MapFrom(tripReqDto.TripCar),
             };
 
-            await repository.UpdateTripAsync(updatedTrip);
+            await tripRepository.UpdateTripAsync(updatedTrip);
             return OperationResult.Success();
         }
 
         public async Task<OperationResult<GetActiveTripsResDto>> GetTripById(Guid id)
         {
-            var tripResult = await repository.GetTripByTripIdAsync(id);
+            var tripResult = await tripRepository.GetTripByTripIdAsync(id);
 
             if (!tripResult.IsSuccess)
                 return OperationResult<GetActiveTripsResDto>.Error(tripResult.ErrorText);
@@ -161,7 +176,7 @@ namespace NvkInWayWebApi.Application.Services
                 Trip = new Trip { Id = recordReqDto.TripId }
             };
 
-            return await repository.RecordToTripAsync(record);
+            return await tripRepository.RecordToTripAsync(record);
         }
 
         public async Task<OperationResult> CompleteTripAsync(EndTripReqDto endTripReqDto)
@@ -172,18 +187,18 @@ namespace NvkInWayWebApi.Application.Services
                 DriverId = endTripReqDto.DriverId
             };
 
-            return await repository.CompleteTripAsync(endTrip);
+            return await tripRepository.CompleteTripAsync(endTrip);
         }
 
         public async Task<OperationResult> RateParticipantAsync(SetRatingReqDto setRatingReqDto)
         {
-            return await repository.RateParticipantAsync(setRatingReqDto.TripId, setRatingReqDto.RaterId, setRatingReqDto.TargetId, setRatingReqDto.Rating);
+            return await tripRepository.RateParticipantAsync(setRatingReqDto.TripId, setRatingReqDto.RaterId, setRatingReqDto.TargetId, setRatingReqDto.Rating);
         }
 
         public async Task<OperationResult<List<NotifyTripResDto>>> GetNotifyingProfilesFromTrips(int startTripIndex,
             int tripCount)
         {
-            var result = await repository.GetNotifyingProfilesFromTrips(startTripIndex, tripCount);
+            var result = await tripRepository.GetNotifyingProfilesFromTrips(startTripIndex, tripCount);
 
             if (!result.IsSuccess)
                 return OperationResult<List<NotifyTripResDto>>.Error(result.ErrorText);

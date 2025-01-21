@@ -328,7 +328,8 @@ namespace NvkInWayWebApi.Persistence.Repositories
             var now = DateTimeOffset.UtcNow;
             var upcomingTime = now.AddMinutes(30);
 
-            var tripsForNotify = await _dbSet.Where(t => !t.NotifyingProcessed && t.DriveStartTime <= upcomingTime)
+            var tripsForNotify = await _dbSet
+                .Where(t => !t.NotifyingProcessed && t.DriveStartTime <= upcomingTime)
                 .Include(t => t.Driver)
                 .Include(t => t.Records)
                 .Include(t => t.StartPointNavigation)
