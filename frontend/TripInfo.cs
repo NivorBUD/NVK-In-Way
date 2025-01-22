@@ -25,28 +25,53 @@ public class TripInfo
     }
 }
 
-public static class ActiveTrip
+public class ActiveTrip
 {
+    private Dictionary<int, Trip> TripDictionary = new();
+    public static List<Trip> trips; 
+
     public static async void ViewActiveTrip(ITelegramBotClient botClient, Chat chat)
     {
-        // Тестовый словарь, нужно поменять на все доступные поездки из БД
-        var active = new Dictionary<int, TripInfo>();
-        active[0] = new TripInfo("NVK - GUK", "1 - 2", 200, 3);
-        active[1] = new TripInfo("GUK - NVK", "1", 300, 1);
-
-        for (int i = 0; i < active.Count; i++)
+        trips = new List<Trip>();
+        if (Program.DriversDataBase.Keys.Count == 0)
         {
-            var inlineKeyboard = new InlineKeyboardMarkup(
+            await botClient.SendTextMessageAsync(chat.Id, "На данный момент нет созданных поездок");
+        }
+        var counter = 0;
+        foreach (long index in Program.DriversDataBase.Keys)
+        {
+            var curList = Program.DriversDataBase[index].trips;
+            for (int i = 0; i < curList.Count; i++)
+            {
+                counter++;
+                trips.Add(curList[i]);
+                var inlineKeyboard = new InlineKeyboardMarkup(
                 new List<InlineKeyboardButton[]>()
                 {
                     new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Подробнее", "moreInf"), 
+                        InlineKeyboardButton.WithCallbackData("Подробнее", $"moreInf_{counter}"), 
                     },
                 });
-            await botClient.SendTextMessageAsync(chat.Id, 
-                $"Активные поездки: {i+1}\nОткуда - Куда: {active[i].PlaceStartEnd}\nВремя: {active[i].TimeStartEnd}\nЦена: {active[i].Price}\nКолличество свободных мест: {active[i].Free}", 
+                await botClient.SendTextMessageAsync(chat.Id, 
+                $"\bАктивные поездки: {counter}\nОткуда - Куда: {curList[i].From} - {curList[i].To}\nВремя: {curList[i].ToPair}\nЦена: {curList[i].Cost}\nКолличество свободных мест: {curList[i].NumberOfAvailableSeats}", 
                  replyMarkup: inlineKeyboard);
+            }
         }
+    }
+
+    public static async void ViewTrip(ITelegramBotClient botClient, Chat chat, Trip trip)
+    {
+        var inlineKeyboard = new InlineKeyboardMarkup(
+        new List<InlineKeyboardButton[]>()
+        {
+            new InlineKeyboardButton[]
+            {
+                InlineKeyboardButton.WithCallbackData("Поеду", "takeIt"), 
+            },
+        });
+        await botClient.SendTextMessageAsync(chat.Id, 
+        $"Информация\nОткуда - Куда: {trip.From} - {trip.To}\nВремя: {trip.ToPair}\nЦена: {trip.Cost}\nКолличество свободных мест: {trip.NumberOfAvailableSeats}\nМесто посадки: {trip.CarPosition}\n Марка-цвет-номер авто: {trip.driver.car.Name}-{trip.driver.car.Color}-{trip.driver.car.Number}", 
+        replyMarkup: inlineKeyboard);
     }
 }
