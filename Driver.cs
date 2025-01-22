@@ -8,10 +8,10 @@ namespace TGBotNVK;
 
 public class Driver
 {
-    private string autoName;
-    private string autoNumber;
-    private string autoColor;
-    private long TGId;
+    public string autoName;
+    public string autoNumber;
+    public string autoColor;
+    public long TGId;
     private int rating;
     private int allTripsCount;
 
