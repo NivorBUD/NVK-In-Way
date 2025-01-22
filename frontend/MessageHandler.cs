@@ -103,8 +103,12 @@ public static class MessageHandler
                 },
                 new InlineKeyboardButton[]
                 {
+                    InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
+                }
+                /*new InlineKeyboardButton[]
+                {
                     InlineKeyboardButton.WithCallbackData("Создание комнаты объединения в таксу", "create_room"),
-                },
+                },*/
             });
         await botClient.SendMessage(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
     }

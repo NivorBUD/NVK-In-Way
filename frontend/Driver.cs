@@ -8,7 +8,8 @@ namespace TGBotNVK;
 
 public class Driver
 {
-    private Car car;
+    //private Car car;
+    public Car car { get; private set; }
     private int rating;
     private int allTripsCount;
 

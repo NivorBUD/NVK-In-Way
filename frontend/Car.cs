@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace TGBotNVK;
 
-class Car
+public class Car
 {
     public string Name = "";
     public string Number = "";

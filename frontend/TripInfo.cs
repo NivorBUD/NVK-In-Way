@@ -71,7 +71,7 @@ public class ActiveTrip
             },
         });
         await botClient.SendTextMessageAsync(chat.Id, 
-        $"Информация\nОткуда - Куда: {trip.From} - {trip.To}\nВремя: {trip.ToPair}\nЦена: {trip.Cost}\nКолличество свободных мест: {trip.NumberOfAvailableSeats}\nМесто посадки: {trip.CarPosition}\n Марка-цвет-номер авто: {trip.driver.autoName}-{trip.driver.autoColor}-{trip.driver.autoNumber}", 
+        $"Информация\nОткуда - Куда: {trip.From} - {trip.To}\nВремя: {trip.ToPair}\nЦена: {trip.Cost}\nКолличество свободных мест: {trip.NumberOfAvailableSeats}\nМесто посадки: {trip.CarPosition}\n Марка-цвет-номер авто: {trip.driver.car.Name}-{trip.driver.car.Color}-{trip.driver.car.Number}", 
         replyMarkup: inlineKeyboard);
     }
 }
