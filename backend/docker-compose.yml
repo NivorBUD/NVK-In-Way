@@ -1,0 +1,29 @@
+services:
+  nvkinwaywebapi:
+    image: ${DOCKER_REGISTRY-}nvkinwaywebapi
+    build:
+      context: .
+      dockerfile: NvkInWayWebApi/Dockerfile
+    ports:
+     - "5878:5878"
+    networks:
+     - rb-network
+    depends_on:
+     - postgresdb
+
+  postgresdb:
+    image: "postgres:latest"
+    container_name: postgresdb
+    env_file:
+     - .env
+    volumes:
+     - ./.containers/postgres-db:/var/lib/postgresql/data
+    networks:
+     - rb-network
+    ports:
+     - "5432:5432"
+
+name: nvkwebapi-docker-compose
+networks:
+  rb-network:
+    driver: bridge

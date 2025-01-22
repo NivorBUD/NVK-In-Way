@@ -398,3 +398,5 @@ FodyWeavers.xsd
 *.sln.iml
 /backend/NvkInWayWebApi/appsettings.json
 /backend/NvkInWayWebApi/wwwroot/driver_cars
+/backend/.containers/postgres-db
+/backend/.env
