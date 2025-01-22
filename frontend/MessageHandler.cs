@@ -109,29 +109,6 @@ public static class MessageHandler
         await botClient.SendMessage(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
     }
 
-    /*public static async void ViewActiveTrip(ITelegramBotClient botClient, Chat chat)
-    {
-        // Тестовый словарь, нужно поменять на все доступные поездки из БД
-        var active = new Dictionary<int, TripInfo>();
-        active[0] = new TripInfo("NVK - GUK", "1 - 2", 200, 3);
-        active[1] = new TripInfo("GUK - NVK", "1", 300, 1);
-
-        for (int i = 0; i < active.Count; i++)
-        {
-            var inlineKeyboard = new InlineKeyboardMarkup(
-                new List<InlineKeyboardButton[]>()
-                {
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData("Подробнее", "moreInf"), 
-                    },
-                });
-            await botClient.SendTextMessageAsync(chat.Id, 
-                $"Активные поездки: {i+1}\nОткуда - Куда: {active[i].PlaceStartEnd}\nВремя: {active[i].TimeStartEnd}\nЦена: {active[i].Price}\nКолличество свободных мест: {active[i].Free}", 
-                 replyMarkup: inlineKeyboard);
-        }
-    }*/
-
     public static async void CheckStartChoice(ITelegramBotClient botClient, Update update)
     {
         if (Program.isBusy) return;
@@ -139,7 +116,14 @@ public static class MessageHandler
         var callbackQuery = update.CallbackQuery;
         var user = callbackQuery.From;
         var chat = callbackQuery.Message.Chat;
-
+        if (callbackQuery.Data.StartsWith("moreInf_"))
+        {
+            await botClient.AnswerCallbackQuery(callbackQuery.Id);
+            var tripId = int.Parse(callbackQuery.Data.Split('_')[1]);
+            var trip = ActiveTrip.trips[tripId-1];
+            ActiveTrip.ViewTrip(botClient, chat, trip);
+            return;
+        }
         switch (callbackQuery.Data)
         {
             case "pas_button":
