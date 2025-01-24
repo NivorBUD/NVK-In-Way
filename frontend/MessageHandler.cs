@@ -91,7 +91,6 @@ public static class MessageHandler
     public static async void PrintPassengerMenu(ITelegramBotClient botClient, Chat chat)
     {
         var dataToPost = new { tgProfileId = chat.Id };
-        await DataBaseConect.PostDataToApi($"/api/Passenger/create-passenger-profile", dataToPost);
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
             {
@@ -185,4 +184,6 @@ public static class MessageHandler
         }
         return;
     }
+
+
 }

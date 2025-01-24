@@ -35,7 +35,7 @@ namespace TGBotNVK.WebApiClient
     public partial class ApiClient
     {
 #pragma warning disable 8618
-        private string _baseUrl = "http://localhost:5878/";
+        private string _baseUrl = "http://138.124.20.138:5878/";
 #pragma warning restore 8618
 
         private System.Net.Http.HttpClient _httpClient;
