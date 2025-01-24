@@ -76,7 +76,9 @@ public static class ProfileHandler
                     color = msg.Text;
                     Program.isBusy = false;
                     creatingProfileStep = 0;
-                    if (driver.IsSuccess)
+                    var createDriver = await apiClient.CreateProfileAsync(
+                        "1.0", new DriverProfileReqDto { Cars = new[] { new CarReqDto { AutoName = name, AutoNumber = number, AutoColor = color } }, TgProfileId = 33/*chat.Id*/ });
+                    /*if (driver.IsSuccess)
                     {
                         var test = driver.Data.Cars.ToArray()[0].AutoId;
                         var newCar = new DetailedСarReqDto { Id = driver.Data.Cars.First().AutoId, AutoName = name, AutoNumber = number, AutoColor = color };
@@ -86,7 +88,7 @@ public static class ProfileHandler
                     {
                         var createDriver = await apiClient.CreateProfileAsync(
                         "1.0", new DriverProfileReqDto { Cars = new[] { new CarReqDto { AutoName = name, AutoNumber = number, AutoColor = color } }, TgProfileId = chat.Id });
-                    }
+                    }*/
                     Program.StartWithStandardUpdateHandler();
                     await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;
