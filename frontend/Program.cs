@@ -18,7 +18,7 @@ class Program
 
     static async Task Main()
     {
-        _botClient = new TelegramBotClient("8197866349:AAHs9I0YwiTo5QfBchG0-Q5X2eNMbNA-Q6U");
+        _botClient = new TelegramBotClient("7664250365:AAFEp8JUtd_6xb5PzTWPriBHXJlTO7J_KjI");
         //_botClient = new TelegramBotClient("8026874216:AAEOlGPMXT_IjX4GvctMpFm044q8tB2C2fc");
         _receiverOptions = new ReceiverOptions
         {
