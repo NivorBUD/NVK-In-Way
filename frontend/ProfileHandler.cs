@@ -13,6 +13,7 @@ using TGBotNVK.WebApiClient;
 using TGBotNVK.WebApiClient.Dtos.Driver.ReqDtos;
 using TGBotNVK.WebApiClient.Dtos.General.ReqDtos;
 using System.Linq.Expressions;
+using TGBotNVK.WebApiClient.Dtos.General.ResDtos;
 using TGBotNVK.WebApiClient.Exceptions;
 
 namespace TGBotNVK;
@@ -47,7 +48,7 @@ public static class ProfileHandler
     {
         var msg = update.Message;
         var chat = msg.Chat;
-        var driver = await apiClient.GetProfileAsync(msg.Chat.Id, "1.0");
+        var driver = await apiClient.GetDriverProfileAsync(msg.Chat.Id, "1.0", cancellationToken);
 
         switch (creatingProfileStep)
         {
@@ -84,7 +85,7 @@ public static class ProfileHandler
                         test.AutoName = name;
                         test.AutoColor = color;
                         var newCar = new DetailedСarReqDto { Id = test.AutoId, AutoName = name, AutoNumber = number, AutoColor = color };
-                        var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", new[] { newCar });
+                        var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "1.0", new List<DetailedСarReqDto> { newCar });
                         //var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", driver.Data.Cars);
                     }
                     else

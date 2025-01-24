@@ -115,7 +115,7 @@ public class ActiveTrip
             });
         await botClient.SendTextMessageAsync(chat.Id, GetTripDetailedInfoString(getTrip.Data), replyMarkup: inlineKeyboard);
 
-        var image = InputFile.FromUri(new Uri($"http://138.124.20.138:5878/api/Driver/download-car-image/{getTrip.Data.TripCar.AutoId}"));
+        var image = InputFile.FromUri(new Uri($"http://138.124.20.138:5878/driver_cars/{getTrip.Data.TripCar.AutoId}"));
         
         var message = await botClient.SendPhoto(chat.Id, image);
     }

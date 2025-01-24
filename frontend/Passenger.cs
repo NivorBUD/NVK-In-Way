@@ -1,4 +1,4 @@
-using System;
+п»їusing System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
@@ -9,6 +9,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TGBotNVK.WebApiClient;
+using TGBotNVK.WebApiClient.Dtos.Passenger.ResDtos;
 
 namespace TGBotNVK;
 public class Passenger
@@ -35,32 +36,30 @@ public static class PassengerInfo
         if (response.IsSuccess)
         {
             var data = response.Data;
-            var passenger = new Passenger(0, 0, update.CallbackQuery.From.Username);
             var inlineKeyboard = new InlineKeyboardMarkup(
                 new List<InlineKeyboardButton[]>()
                 {
                     new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData($"Профиль ТГ: {passenger.Profile}", "profile"),
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData($"Рейтинг: {(data.Rating != null ? data.Rating : 0)}"),
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {data.TripsCount}"),
-                    },
-                    new InlineKeyboardButton[]
-                    {
-                        InlineKeyboardButton.WithCallbackData($"Назад", "pas_button"),
+                        InlineKeyboardButton.WithCallbackData($"РќР°Р·Р°Рґ", "pas_button"),
                     },
                 });
-            await botClient.SendTextMessageAsync(chat.Id, "Карточка пользователя", replyMarkup: inlineKeyboard);
+            await botClient.SendTextMessageAsync(chat.Id,
+                CreatePassengerCard(data, update.CallbackQuery.From.Username), replyMarkup: inlineKeyboard);
         }
         else
         {
-            await botClient.SendTextMessageAsync(chat.Id, "Произошла ошибка при получении данных");
+            await botClient.SendTextMessageAsync(chat.Id, "РџСЂРѕРёР·РѕС€Р»Р° РѕС€РёР±РєР° РїСЂРё РїРѕР»СѓС‡РµРЅРёРё РґР°РЅРЅС‹С…");
         }
+    }
+
+    private static string CreatePassengerCard(PassengerShortResDto passengerShortResDto, string account)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine($"рџ‘¤ РџРѕР»СЊР·РѕРІР°С‚РµР»СЊ: {account}");
+        sb.AppendLine($"в­ђпёЏ Р РµР№С‚РёРЅРі: {(passengerShortResDto.Rating != null ? passengerShortResDto.Rating : 0)}");
+        sb.AppendLine($"рџљ— РџРѕРµР·РґРѕРє: {passengerShortResDto.TripsCount}");
+
+        return sb.ToString();
     }
 }

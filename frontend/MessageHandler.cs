@@ -61,7 +61,7 @@ public static class MessageHandler
     {
         //var isDriverInDataBase = Program.IsDriverIdInDataBase(userId);
         var buttons = new List<InlineKeyboardButton[]>();
-        var driver = await apiClient.GetProfileAsync(chat.Id, "1.0");
+        var driver = await apiClient.GetDriverProfileAsync(chat.Id, "1.0");
         if (!driver.IsSuccess)
         {
             buttons = new List<InlineKeyboardButton[]>(){
@@ -81,6 +81,10 @@ public static class MessageHandler
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton.WithCallbackData("Редактировать профиль", "recreate driver profile")
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Посмотреть карточку", "driver_view_info"),
                 },
                 new InlineKeyboardButton[]
                 {
@@ -128,7 +132,7 @@ public static class MessageHandler
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Посмотреть карточку", "view_info"),
+                    InlineKeyboardButton.WithCallbackData("Посмотреть карточку", "passenger_view_info"),
                 },
                 new InlineKeyboardButton[]
                 {
@@ -158,18 +162,30 @@ public static class MessageHandler
                     PrintPassengerMenu(botClient, chat);
                     return;
                 }
+            case "dri_button":
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                PrintDriverMenu(botClient, chat, chat.Id);
+                return;
+            }
             case "driver_button":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
                     await PrintDriverMenu(botClient, chat, user.Id);
                     return;
                 }
-            case "view_info":
+            case "passenger_view_info":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
                     PassengerInfo.ShowPassangerCard(botClient, chat, update);
                     return;
                 }
+            case "driver_view_info":
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                DriverCardInfo.ShowDriverCard(botClient, chat, update);
+                return;
+            }
             case "view_active_pass":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
