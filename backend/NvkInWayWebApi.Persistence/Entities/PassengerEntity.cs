@@ -8,7 +8,7 @@ public partial class PassengerEntity
 
     public float? Rating { get; set; }
 
-    public float TotalRating { get; set; }
+    public float? TotalRating { get; set; }
 
     public int RatingCount { get; set; }
 

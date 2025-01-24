@@ -32,6 +32,8 @@ public partial class TripEntity
 
     public bool NotifyingProcessed { get; set; }
 
+    public bool Completed { get; set; }
+
     //------------------------------------------------
 
     public virtual CarEntity Car { get; set; } = null!;

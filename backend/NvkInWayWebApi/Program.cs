@@ -56,7 +56,7 @@ namespace NvkInWayWebApi
             }
 
             app.UseAuthorization();
-
+            app.UseStaticFiles();
 
             app.MapControllers();
 

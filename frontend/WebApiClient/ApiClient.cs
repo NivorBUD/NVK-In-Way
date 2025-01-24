@@ -4,6 +4,7 @@
 // </auto-generated>
 //----------------------
 
+using System.Collections.Generic;
 using System.Reflection.Metadata.Ecma335;
 using TGBotNVK.WebApiClient.Dtos.CarTrip.ReqDtos;
 using TGBotNVK.WebApiClient.Dtos.CarTrip.ResDtos;
@@ -739,24 +740,18 @@ namespace TGBotNVK.WebApiClient
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-
                     if (api_version != null)
                         request_.Headers.TryAddWithoutValidation("api-version", ConvertToString(api_version, System.Globalization.CultureInfo.InvariantCulture));
                     request_.Method = new System.Net.Http.HttpMethod("GET");
-
                     var urlBuilder_ = new System.Text.StringBuilder();
                     if (!string.IsNullOrEmpty(_baseUrl)) urlBuilder_.Append(_baseUrl);
                     // Operation Path: "api/Driver/download-car-image/{carId}"
                     urlBuilder_.Append("api/Driver/download-car-image/");
                     urlBuilder_.Append(System.Uri.EscapeDataString(ConvertToString(carId, System.Globalization.CultureInfo.InvariantCulture)));
-
                     PrepareRequest(client_, request_, urlBuilder_);
-
                     var url_ = urlBuilder_.ToString();
                     request_.RequestUri = new System.Uri(url_, System.UriKind.RelativeOrAbsolute);
-
                     PrepareRequest(client_, request_, url_);
-
                     var response_ = await client_.SendAsync(request_, System.Net.Http.HttpCompletionOption.ResponseHeadersRead, cancellationToken).ConfigureAwait(false);
                     var disposeResponse_ = true;
                     try
@@ -769,9 +764,7 @@ namespace TGBotNVK.WebApiClient
                             foreach (var item_ in response_.Content.Headers)
                                 headers_[item_.Key] = item_.Value;
                         }
-
                         ProcessResponse(client_, response_);
-
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
@@ -1434,7 +1427,7 @@ namespace TGBotNVK.WebApiClient
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ApiResponse<GetActiveTripsResDto>> ActiveDriverTripsAsync(long driverId, int? startIndex, int? count, string api_version)
+        public virtual System.Threading.Tasks.Task<ApiResponse<List<GetActiveTripsResDto>>> ActiveDriverTripsAsync(long driverId, int? startIndex, int? count, string api_version)
         {
             return ActiveDriverTripsAsync(driverId, startIndex, count, api_version, System.Threading.CancellationToken.None);
         }
@@ -1445,7 +1438,7 @@ namespace TGBotNVK.WebApiClient
         /// </summary>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ApiResponse<GetActiveTripsResDto>> ActiveDriverTripsAsync(long driverId, int? startIndex, int? count, string api_version, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ApiResponse<List<GetActiveTripsResDto>>> ActiveDriverTripsAsync(long driverId, int? startIndex, int? count, string api_version, System.Threading.CancellationToken cancellationToken)
         {
             if (driverId == null)
                 throw new System.ArgumentNullException("driverId");
@@ -1503,12 +1496,12 @@ namespace TGBotNVK.WebApiClient
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetActiveTripsResDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<List<GetActiveTripsResDto>> (response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return ApiResponse<GetActiveTripsResDto>.Success(objectResponse_.Object);
+                            return ApiResponse<List<GetActiveTripsResDto>>.Success(objectResponse_.Object);
                         }
                         else
                         if (status_ == 400)
@@ -1517,16 +1510,16 @@ namespace TGBotNVK.WebApiClient
                             if (objectResponse_.Object == null)
                             {
                                 //throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                                return ApiResponse<GetActiveTripsResDto>.Error("Response was null which was not expected.");
+                                return ApiResponse<List<GetActiveTripsResDto>>.Error("Response was null which was not expected.");
                             }
                             //throw new ApiException<MyResponseMessage>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                            return ApiResponse<GetActiveTripsResDto>.Error(objectResponse_.Object.Message);
+                            return ApiResponse<List<GetActiveTripsResDto>>.Error(objectResponse_.Object.Message);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             //throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                            return ApiResponse<GetActiveTripsResDto>.Error("The HTTP status code of the response was not expected (" + status_ + ").");
+                            return ApiResponse<List<GetActiveTripsResDto>>.Error("The HTTP status code of the response was not expected (" + status_ + ").");
                         }
                     }
                     finally
@@ -1549,7 +1542,7 @@ namespace TGBotNVK.WebApiClient
         /// <param name="passengerId">telegram user ID</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ApiResponse<GetActiveTripsResDto>> ActivePassengerTripsAsync(long passengerId, int? startIndex, int? count, string api_version)
+        public virtual System.Threading.Tasks.Task<ApiResponse<List<GetActiveTripsResDto>>> ActivePassengerTripsAsync(long passengerId, int? startIndex, int? count, string api_version)
         {
             return ActivePassengerTripsAsync(passengerId, startIndex, count, api_version, System.Threading.CancellationToken.None);
         }
@@ -1561,7 +1554,7 @@ namespace TGBotNVK.WebApiClient
         /// <param name="passengerId">telegram user ID</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ApiResponse<GetActiveTripsResDto>> ActivePassengerTripsAsync(long passengerId, int? startIndex, int? count, string api_version, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ApiResponse<List<GetActiveTripsResDto>>> ActivePassengerTripsAsync(long passengerId, int? startIndex, int? count, string api_version, System.Threading.CancellationToken cancellationToken)
         {
             if (passengerId == null)
                 throw new System.ArgumentNullException("passengerId");
@@ -1619,12 +1612,12 @@ namespace TGBotNVK.WebApiClient
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<GetActiveTripsResDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<List<GetActiveTripsResDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
                             }
-                            return ApiResponse<GetActiveTripsResDto>.Success(objectResponse_.Object);
+                            return ApiResponse<List<GetActiveTripsResDto>>.Success(objectResponse_.Object);
                         }
                         else
                         if (status_ == 400)
@@ -1633,16 +1626,16 @@ namespace TGBotNVK.WebApiClient
                             if (objectResponse_.Object == null)
                             {
                                 //throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                                return ApiResponse<GetActiveTripsResDto>.Error("Response was null which was not expected.");
+                                return ApiResponse<List<GetActiveTripsResDto>>.Error("Response was null which was not expected.");
                             }
                             //throw new ApiException<MyResponseMessage>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                            return ApiResponse<GetActiveTripsResDto>.Error(objectResponse_.Object.Message);
+                            return ApiResponse<List<GetActiveTripsResDto>>.Error(objectResponse_.Object.Message);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             //throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                            return ApiResponse<GetActiveTripsResDto>.Error("The HTTP status code of the response was not expected (" + status_ + ").");
+                            return ApiResponse<List<GetActiveTripsResDto>>.Error("The HTTP status code of the response was not expected (" + status_ + ").");
                         }
                     }
                     finally

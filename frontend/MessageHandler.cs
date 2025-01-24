@@ -124,7 +124,7 @@ public static class MessageHandler
             {
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Посмотреть список активных поездок", "view_active"),
+                    InlineKeyboardButton.WithCallbackData("Посмотреть список активных поездок", "view_active_pass"),
                 },
                 new InlineKeyboardButton[]
                 {
@@ -147,10 +147,7 @@ public static class MessageHandler
         var chat = callbackQuery.Message.Chat;
         if (callbackQuery.Data.StartsWith("moreInf_"))
         {
-            await botClient.AnswerCallbackQuery(callbackQuery.Id);
-            var tripId = int.Parse(callbackQuery.Data.Split('_')[1]);
-            var trip = ActiveTrip.trips[tripId-1];
-            ActiveTrip.ViewTrip(botClient, chat, trip);
+            await MoreInfoQuery(botClient, callbackQuery, chat);
             return;
         }
         switch (callbackQuery.Data)
@@ -173,10 +170,16 @@ public static class MessageHandler
                     PassengerInfo.ShowPassangerCard(botClient, chat, update);
                     return;
                 }
-            case "view_active":
+            case "view_active_pass":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    ActiveTrip.ViewActiveTrip(botClient, chat);
+                    ActiveTrip.ViewPassengerActiveTrip(botClient, chat);
+                    return;
+                }
+            case "view_active_driver":
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    ActiveTrip.ViewDriverActiveTrip(botClient, chat);
                     return;
                 }
             case "create driver profile":
@@ -216,5 +219,15 @@ public static class MessageHandler
         return;
     }
 
+    private static async Task MoreInfoQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, Chat chat)
+    {
+        await botClient.AnswerCallbackQuery(callbackQuery.Id);
+        if (!Guid.TryParse(callbackQuery.Data.Split('_')[1], out var tripId))
+        {
+            await botClient.SendMessage(chat.Id, "Произошла ошибка при получении идентификатора поездки");
+            return;
+        }
 
+        ActiveTrip.ViewTrip(botClient, chat, tripId);
+    }
 }

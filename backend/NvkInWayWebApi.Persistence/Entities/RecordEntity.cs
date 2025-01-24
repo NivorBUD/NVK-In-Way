@@ -10,6 +10,10 @@ public partial class RecordEntity
 
     public long PassengerId { get; set; }
 
+    public bool isDriverMark { get; set; }
+
+    public bool isPassengerMark { get; set; }
+
     public virtual DriverEntity Driver { get; set; } = null!;
 
     public virtual PassengerEntity Passenger { get; set; } = null!;
