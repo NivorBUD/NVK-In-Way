@@ -6,10 +6,13 @@ services:
       dockerfile: NvkInWayWebApi/Dockerfile
     ports:
      - "5878:5878"
+    volumes:
+     - ./NvkInWayWebApi/wwwroot:/app/wwwroot
     networks:
      - rb-network
     depends_on:
      - postgresdb
+    user: "1000:1000"
 
   postgresdb:
     image: "postgres:latest"
