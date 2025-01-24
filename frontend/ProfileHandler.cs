@@ -8,6 +8,11 @@ using Telegram.Bot;
 using static Telegram.Bot.TelegramBotClient;
 using Telegram.Bot.Polling;
 using System.Threading;
+using Telegram.Bot.Types.ReplyMarkups;
+using TGBotNVK.WebApiClient;
+using TGBotNVK.WebApiClient.Dtos.Driver.ReqDtos;
+using TGBotNVK.WebApiClient.Dtos.General.ReqDtos;
+using System.Linq.Expressions;
 
 namespace TGBotNVK;
 public static class ProfileHandler
@@ -17,26 +22,37 @@ public static class ProfileHandler
 
     public static async void StartCreatingDriverProfile(Message msg, ITelegramBotClient botClient)
     {
-        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
+        //var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
+        var driver = await apiClient.GetProfileAsync(msg.Chat.Id, "1.0");
+        if (!driver.IsSuccess)
+        {
+            await botClient.SendMessage(
+                msg.Chat.Id,
+                "Введите марку авто");
 
-        await botClient.SendMessage(
-                        msg.Chat.Id,
-                        "Введите марку авто");
-
-        Program.StartBotWithAnotherUpdateHandler(CreateDriverProfile);
+            Program.StartBotWithAnotherUpdateHandler(CreateDriverProfile);
+        }
+        else
+        {
+            await MessageHandler.PrintDriverMenu(botClient, msg.Chat, msg.From.Id);
+        }
     }
+    
+    private static ApiClient apiClient = new ApiClient(new HttpClient());
+    private static string name = "";
+    private static string number = "";
+    private static string color = "";
 
     private static async Task CreateDriverProfile(ITelegramBotClient botClient, Update update, CancellationToken cancellationToken)
     {
         var msg = update.Message;
         var chat = msg.Chat;
-        var driver = Program.GetDriverFromDatabse(msg.Chat.Id);
 
         switch (creatingProfileStep)
         {
             case 0:
                 {
-                    driver.SetAutoName(msg.Text);
+                    name = msg.Text;
                     await botClient.SendMessage(
                         chat.Id,
                         "Введите номер авто",
@@ -46,7 +62,7 @@ public static class ProfileHandler
                 }
             case 1:
                 {
-                    driver.SetAutoNumber(msg.Text);
+                    number = msg.Text;
                     await botClient.SendMessage(
                         chat.Id,
                         "Введите цвет авто",
@@ -56,13 +72,18 @@ public static class ProfileHandler
                 }
             case 2:
                 {
-                    driver.SetAutoColor(msg.Text);
+                    color = msg.Text;
                     Program.isBusy = false;
                     creatingProfileStep = 0;
-                    await botClient.SendMessage(
-                        chat.Id,
-                        driver.ToString(),
-                        cancellationToken: cancellationToken);
+                    try
+                    {
+                        var createDriver = await apiClient.CreateProfileAsync(
+                        "1.0", new DriverProfileReqDto { Cars = new[] { new CarReqDto { AutoName = name, AutoNumber = number, AutoColor = color } }, TgProfileId = chat.Id });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
                     Program.StartWithStandardUpdateHandler();
                     await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;

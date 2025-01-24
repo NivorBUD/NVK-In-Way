@@ -59,13 +59,13 @@ public static class MessageHandler
 
     public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat, long userId)
     {
-        var isDriverInDataBase = Program.IsDriverIdInDataBase(userId);
-
+        //var isDriverInDataBase = Program.IsDriverIdInDataBase(userId);
+        var driver = await apiClient.GetProfileAsync(chat.Id, "1.0");
         var buttons = new List<InlineKeyboardButton[]>(){
             new InlineKeyboardButton[]
             {
                 InlineKeyboardButton.WithCallbackData(
-                    isDriverInDataBase ? "Редактировать профиль" : "Создать профиль", 
+                    (driver.IsSuccess) ? "Редактировать профиль" : "Создать профиль", 
                     "create driver profile")
             },
             new InlineKeyboardButton[]
@@ -73,7 +73,7 @@ public static class MessageHandler
                 InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
             }
         };
-        if (isDriverInDataBase)
+        if (driver.IsSuccess)
         {
             buttons.Add(new InlineKeyboardButton[]
                 {
