@@ -28,6 +28,8 @@ public static class PassengerInfo
 {
     public static async void ShowPassangerCard(ITelegramBotClient botClient, Chat chat, Update update)
     {
+        var data = DataBaseConect.GetDataFromApi($"/api/Passenger/get-passenger-profile/{chat.Id}").Result;
+        var dict = DataBaseConect.GetResultDictionary(data);
         var passenger = new Passenger(0, 0, update.CallbackQuery.From.Username);
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
@@ -38,11 +40,11 @@ public static class PassengerInfo
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData($"Рейтинг: {passenger.Rating}"),
+                    InlineKeyboardButton.WithCallbackData($"Рейтинг: {(dict["rating"] != "null" ? dict["rating"] : 0)}"),
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {passenger.TripCount}"),
+                    InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {dict["tripsCount"]}"),
                 },
                 new InlineKeyboardButton[]
                 {

@@ -90,6 +90,7 @@ public static class MessageHandler
 
     public static async void PrintPassengerMenu(ITelegramBotClient botClient, Chat chat)
     {
+        await DataBaseConect.PostDataToApi($"/api/Passenger/create-passenger-profile", chat.Id);
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
             {
