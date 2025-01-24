@@ -7,11 +7,15 @@ using Telegram.Bot.Types;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TGBotNVK.WebApiClient;
+using TGBotNVK.WebApiClient.Dtos.Passenger.ReqDtos;
 
 namespace TGBotNVK;
 
 public static class MessageHandler
 {
+    private static ApiClient apiClient = new ApiClient(new HttpClient());
+
     public static async void ProcessMessage(Message msg, ITelegramBotClient botClient)
     {
         var user = msg.From;
@@ -91,6 +95,19 @@ public static class MessageHandler
     public static async void PrintPassengerMenu(ITelegramBotClient botClient, Chat chat)
     {
         var dataToPost = new { tgProfileId = chat.Id };
+        var getPassenger = await apiClient.GetPassengerProfileAsync(chat.Id, "1.0");
+        if (!getPassenger.IsSuccess)
+        {
+            var createPassenger = await apiClient.CreatePassengerProfileAsync(
+                "1.0", new PassengerShortProfileReqDto { TgProfileId = chat.Id });
+
+            if (!createPassenger.IsSuccess)
+            {
+                await botClient.SendMessage(chat.Id, "Произошла ошибка при создании профиля");
+                return;
+            }
+        }
+        
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
             {

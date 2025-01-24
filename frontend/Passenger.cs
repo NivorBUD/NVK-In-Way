@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 using Telegram.Bot.Types;
@@ -30,29 +31,36 @@ public static class PassengerInfo
     private static ApiClient apiClient = new ApiClient(new HttpClient());
     public static async void ShowPassangerCard(ITelegramBotClient botClient, Chat chat, Update update)
     {
-        var data = await apiClient.GetPassengerProfileAsync(chat.Id, "1.0");
-        
-        var passenger = new Passenger(0, 0, update.CallbackQuery.From.Username);
-        var inlineKeyboard = new InlineKeyboardMarkup(
-            new List<InlineKeyboardButton[]>()
-            {
-                new InlineKeyboardButton[]
+        var response = await apiClient.GetPassengerProfileAsync(chat.Id, "1.0");
+        if (response.IsSuccess)
+        {
+            var data = response.Data;
+            var passenger = new Passenger(0, 0, update.CallbackQuery.From.Username);
+            var inlineKeyboard = new InlineKeyboardMarkup(
+                new List<InlineKeyboardButton[]>()
                 {
-                    InlineKeyboardButton.WithCallbackData($"Профиль ТГ: {passenger.Profile}", "profile"),
-                },
-                new InlineKeyboardButton[]
-                {
-                    InlineKeyboardButton.WithCallbackData($"Рейтинг: {(data.Rating != null ? data.Rating : 0)}"),
-                },
-                new InlineKeyboardButton[]
-                {
-                    InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {data.TripsCount}"),
-                },
-                new InlineKeyboardButton[]
-                {
-                    InlineKeyboardButton.WithCallbackData($"Назад", "pas_button"),
-                },
-            });
-        await botClient.SendTextMessageAsync(chat.Id, "Карточка пользователя", replyMarkup: inlineKeyboard);
+                    new InlineKeyboardButton[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"Профиль ТГ: {passenger.Profile}", "profile"),
+                    },
+                    new InlineKeyboardButton[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"Рейтинг: {(data.Rating != null ? data.Rating : 0)}"),
+                    },
+                    new InlineKeyboardButton[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {data.TripsCount}"),
+                    },
+                    new InlineKeyboardButton[]
+                    {
+                        InlineKeyboardButton.WithCallbackData($"Назад", "pas_button"),
+                    },
+                });
+            await botClient.SendTextMessageAsync(chat.Id, "Карточка пользователя", replyMarkup: inlineKeyboard);
+        }
+        else
+        {
+            await botClient.SendTextMessageAsync(chat.Id, "Произошла ошибка при получении данных");
+        }
     }
 }
