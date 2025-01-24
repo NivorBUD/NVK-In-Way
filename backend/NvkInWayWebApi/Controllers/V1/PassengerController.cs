@@ -45,7 +45,7 @@ namespace NvkInWayWebApi.Controllers.V1
         /// <returns></returns>
         [HttpPost("create-passenger-profile")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreatePassengerProfile([FromBody] PassengerShortProfileReqDto passengerProfileReq)
         {
@@ -59,7 +59,7 @@ namespace NvkInWayWebApi.Controllers.V1
             if (!addResult.IsSuccess)
                 return BadRequest(new MyResponseMessage(addResult.ErrorText));
 
-            return Created();
+            return NoContent();
         }
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace NvkInWayWebApi.Controllers.V1
         /// <returns></returns>
         [HttpPatch("update-passenger-rating")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdatePassengerRating([FromBody] PassengerFullProfileReqDto passengerProfileReq)
         {
@@ -97,7 +97,7 @@ namespace NvkInWayWebApi.Controllers.V1
             if (!updateResult.IsSuccess)
                 return BadRequest(new MyResponseMessage(updateResult.ErrorText));
 
-            return Created();
+            return NoContent();
         }
     }
 }

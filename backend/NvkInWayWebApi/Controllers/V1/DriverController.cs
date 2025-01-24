@@ -62,7 +62,7 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpPost("create-profile")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> CreateDirverProfile([FromBody] DriverProfileReqDto driverProfileReq)
         {
@@ -71,7 +71,7 @@ namespace NvkInWayWebApi.Controllers
             if (!addResult.IsSuccess)
                 return BadRequest(new MyResponseMessage(addResult.ErrorText));
 
-            return Created();
+            return NoContent();
         }
 
         #endregion
@@ -87,7 +87,7 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpPatch("update-driver-cars")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> UpdateDriverProfileCars([FromBody] List<DetailedСarReqDto> listDetailedCars,
             [FromQuery] long driverProfileId)
@@ -97,7 +97,7 @@ namespace NvkInWayWebApi.Controllers
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
 
-            return Created();
+            return NoContent();
         }
 
         /// <summary>
@@ -140,7 +140,7 @@ namespace NvkInWayWebApi.Controllers
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
 
-            return Created();
+            return NoContent();
         }
 
         /// <summary>
@@ -151,7 +151,7 @@ namespace NvkInWayWebApi.Controllers
         /// <returns></returns>
         [HttpPost("add-driver-cars")]
         [Produces("application/json")]
-        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(MyResponseMessage), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> AddDriverProfileCars([FromBody] List<CarReqDto> listDetailedCars,
             [FromQuery] long driverProfileId)
@@ -161,7 +161,7 @@ namespace NvkInWayWebApi.Controllers
             if (!result.IsSuccess)
                 return BadRequest(new MyResponseMessage(result.ErrorText));
 
-            return Created();
+            return NoContent();
         }
 
         /// <summary>
