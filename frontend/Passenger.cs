@@ -7,6 +7,7 @@ using Telegram.Bot.Types;
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
+using TGBotNVK.WebApiClient;
 
 namespace TGBotNVK;
 public class Passenger
@@ -26,10 +27,11 @@ public class Passenger
 
 public static class PassengerInfo
 {
+    private static ApiClient apiClient = new ApiClient(new HttpClient());
     public static async void ShowPassangerCard(ITelegramBotClient botClient, Chat chat, Update update)
     {
-        var data = DataBaseConect.GetDataFromApi($"/api/Passenger/get-passenger-profile/{chat.Id}").Result;
-        var dict = DataBaseConect.GetResultDictionary(data);
+        var data = await apiClient.GetPassengerProfileAsync(chat.Id, "1.0");
+        
         var passenger = new Passenger(0, 0, update.CallbackQuery.From.Username);
         var inlineKeyboard = new InlineKeyboardMarkup(
             new List<InlineKeyboardButton[]>()
@@ -40,11 +42,11 @@ public static class PassengerInfo
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData($"Рейтинг: {(dict["rating"] != "null" ? dict["rating"] : 0)}"),
+                    InlineKeyboardButton.WithCallbackData($"Рейтинг: {(data.Rating != null ? data.Rating : 0)}"),
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {dict["tripsCount"]}"),
+                    InlineKeyboardButton.WithCallbackData($"Число совершенных поездок: {data.TripsCount}"),
                 },
                 new InlineKeyboardButton[]
                 {
