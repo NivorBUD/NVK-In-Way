@@ -60,29 +60,40 @@ public static class MessageHandler
     public static async Task PrintDriverMenu(ITelegramBotClient botClient, Chat chat, long userId)
     {
         //var isDriverInDataBase = Program.IsDriverIdInDataBase(userId);
+        var buttons = new List<InlineKeyboardButton[]>();
         var driver = await apiClient.GetProfileAsync(chat.Id, "1.0");
-        var buttons = new List<InlineKeyboardButton[]>(){
+        if (!driver.IsSuccess)
+        {
+            buttons = new List<InlineKeyboardButton[]>(){
             new InlineKeyboardButton[]
             {
-                InlineKeyboardButton.WithCallbackData(
-                    (driver.IsSuccess) ? "Редактировать профиль" : "Создать профиль", 
-                    "create driver profile")
+                InlineKeyboardButton.WithCallbackData("Создать профиль", "create driver profile")
             },
             new InlineKeyboardButton[]
             {
                 InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
             }
-        };
-        if (driver.IsSuccess)
+            };
+        }     
+        else
         {
-            buttons.Add(new InlineKeyboardButton[]
+            buttons = new List<InlineKeyboardButton[]>(){
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Редактировать профиль", "recreate driver profile")
+                },
+                new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton.WithCallbackData("Посмотреть список созданных поездок", "check trips")
-                });
-            buttons.Add(new InlineKeyboardButton[]
+                },
+                new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton.WithCallbackData("Создать поездку", "create trip")
-                });
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
+                } };
         }
 
         var inlineKeyboard = new InlineKeyboardMarkup(buttons);
@@ -123,10 +134,6 @@ public static class MessageHandler
                 {
                     InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
                 }
-                /*new InlineKeyboardButton[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Создание комнаты объединения в таксу", "create_room"),
-                },*/
             });
         await botClient.SendMessage(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
     }
@@ -173,6 +180,13 @@ public static class MessageHandler
                     return;
                 }
             case "create driver profile":
+                {
+                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                    Program.isBusy = true;
+                    ProfileHandler.StartCreatingDriverProfile(callbackQuery.Message, botClient);
+                    return;
+                }
+            case "recreate driver profile":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
                     Program.isBusy = true;
