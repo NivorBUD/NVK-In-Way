@@ -76,19 +76,22 @@ public static class ProfileHandler
                     color = msg.Text;
                     Program.isBusy = false;
                     creatingProfileStep = 0;
-                    var createDriver = await apiClient.CreateProfileAsync(
-                        "1.0", new DriverProfileReqDto { Cars = new[] { new CarReqDto { AutoName = name, AutoNumber = number, AutoColor = color } }, TgProfileId = 33/*chat.Id*/ });
-                    /*if (driver.IsSuccess)
+                    
+                    if (driver.IsSuccess)
                     {
-                        var test = driver.Data.Cars.ToArray()[0].AutoId;
-                        var newCar = new DetailedСarReqDto { Id = driver.Data.Cars.First().AutoId, AutoName = name, AutoNumber = number, AutoColor = color };
-                        var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", new[] { newCar });
+                        var test = driver.Data.Cars.ToArray()[0];
+                        test.AutoNumber = number;
+                        test.AutoName = name;
+                        test.AutoColor = color;
+                        var newCar = new DetailedСarReqDto { Id = test.AutoId, AutoName = name, AutoNumber = number, AutoColor = color };
+                        //var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", new[] { newCar });
+                        var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", driver.Data.Cars);
                     }
                     else
                     {
                         var createDriver = await apiClient.CreateProfileAsync(
                         "1.0", new DriverProfileReqDto { Cars = new[] { new CarReqDto { AutoName = name, AutoNumber = number, AutoColor = color } }, TgProfileId = chat.Id });
-                    }*/
+                    }
                     Program.StartWithStandardUpdateHandler();
                     await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;

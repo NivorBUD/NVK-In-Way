@@ -294,7 +294,7 @@ namespace TGBotNVK.WebApiClient
         /// <param name="body">List of updated cars</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ApiResponse> UpdateDriverCarsAsync(long? driverProfileId, string api_version, System.Collections.Generic.IEnumerable<DetailedСarReqDto> body)
+        public virtual System.Threading.Tasks.Task<ApiResponse> UpdateDriverCarsAsync(long? driverProfileId, string api_version, /*System.Collections.Generic.IEnumerable<DetailedСarReqDto>*/ System.Collections.Generic.ICollection<WebApiClient.Dtos.General.ResDtos.CarResDto> body)
         {
             return UpdateDriverCarsAsync(driverProfileId, api_version, body, System.Threading.CancellationToken.None);
         }
@@ -307,7 +307,7 @@ namespace TGBotNVK.WebApiClient
         /// <param name="body">List of updated cars</param>
         /// <returns>No Content</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ApiResponse> UpdateDriverCarsAsync(long? driverProfileId, string api_version, System.Collections.Generic.IEnumerable<DetailedСarReqDto> body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ApiResponse> UpdateDriverCarsAsync(long? driverProfileId, string api_version, /*System.Collections.Generic.IEnumerable<DetailedСarReqDto>*/ System.Collections.Generic.ICollection<WebApiClient.Dtos.General.ResDtos.CarResDto> body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
