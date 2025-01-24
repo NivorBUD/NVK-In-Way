@@ -84,8 +84,8 @@ public static class ProfileHandler
                         test.AutoName = name;
                         test.AutoColor = color;
                         var newCar = new DetailedСarReqDto { Id = test.AutoId, AutoName = name, AutoNumber = number, AutoColor = color };
-                        //var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", new[] { newCar });
-                        var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", driver.Data.Cars);
+                        var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", new[] { newCar });
+                        //var car = await apiClient.UpdateDriverCarsAsync(chat.Id, "0.1", driver.Data.Cars);
                     }
                     else
                     {
