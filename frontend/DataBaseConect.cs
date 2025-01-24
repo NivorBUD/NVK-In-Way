@@ -49,8 +49,8 @@ public class DataBaseConect
 
     public static async Task<string> PostDataToApi(string endpoint, object message)
     {
-        var dataToPost = new { tgProfileId = message }; // ѕример содержани€, измените под ваши нужды
-        var json = JsonConvert.SerializeObject(dataToPost);
+        //var dataToPost = new { tgProfileId = message };
+        var json = JsonConvert.SerializeObject(message);
         var content = new StringContent(json, Encoding.UTF8, "application/json");
 
         HttpResponseMessage response = await client.PostAsync(API_BASE_URL + endpoint, content);
