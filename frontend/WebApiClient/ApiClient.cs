@@ -1866,7 +1866,7 @@ namespace TGBotNVK.WebApiClient
         /// <param name="body">Interval settings</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<ApiResponse<ShortActiveTripResDto>> SearchTripsAsync(int? startIndex, int? count, string api_version, IntervalSearchReqDto body)
+        public virtual System.Threading.Tasks.Task<ApiResponse<List<ShortActiveTripResDto>>> SearchTripsAsync(int? startIndex, int? count, string api_version, IntervalSearchReqDto body)
         {
             return SearchTripsAsync(startIndex, count, api_version, body, System.Threading.CancellationToken.None);
         }
@@ -1880,7 +1880,7 @@ namespace TGBotNVK.WebApiClient
         /// <param name="body">Interval settings</param>
         /// <returns>OK</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<ApiResponse<ShortActiveTripResDto>> SearchTripsAsync(int? startIndex, int? count, string api_version, IntervalSearchReqDto body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<ApiResponse<List<ShortActiveTripResDto>>> SearchTripsAsync(int? startIndex, int? count, string api_version, IntervalSearchReqDto body, System.Threading.CancellationToken cancellationToken)
         {
             var client_ = _httpClient;
             var disposeClient_ = false;
@@ -1938,12 +1938,12 @@ namespace TGBotNVK.WebApiClient
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<ShortActiveTripResDto>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<List<ShortActiveTripResDto>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                                return ApiResponse<List<ShortActiveTripResDto>>.Error("Response was null which was not expected.");
                             }
-                            return ApiResponse<ShortActiveTripResDto>.Success(objectResponse_.Object);
+                            return ApiResponse<List<ShortActiveTripResDto>>.Success(objectResponse_.Object);
                         }
                         else
                         if (status_ == 400)
@@ -1952,16 +1952,16 @@ namespace TGBotNVK.WebApiClient
                             if (objectResponse_.Object == null)
                             {
                                 //throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                                return ApiResponse<ShortActiveTripResDto>.Error("Response was null which was not expected.");
+                                return ApiResponse<List<ShortActiveTripResDto>>.Error("Response was null which was not expected.");
                             }
                             //throw new ApiException<MyResponseMessage>("Bad Request", status_, objectResponse_.Text, headers_, objectResponse_.Object, null);
-                            return ApiResponse<ShortActiveTripResDto>.Error(objectResponse_.Object.Message);
+                            return ApiResponse<List<ShortActiveTripResDto>>.Error(objectResponse_.Object.Message);
                         }
                         else
                         {
                             var responseData_ = response_.Content == null ? null : await response_.Content.ReadAsStringAsync().ConfigureAwait(false);
                             //throw new ApiException("The HTTP status code of the response was not expected (" + status_ + ").", status_, responseData_, headers_, null);
-                            return ApiResponse<ShortActiveTripResDto>.Error("The HTTP status code of the response was not expected (" + status_ + ").");
+                            return ApiResponse<List<ShortActiveTripResDto>>.Error("The HTTP status code of the response was not expected (" + status_ + ").");
                         }
                     }
                     finally

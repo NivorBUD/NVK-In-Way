@@ -257,6 +257,7 @@ public static class ProfileHandler
                         return;
                     }
                     await botClient.SendMessage(chat.Id, GetCreateTripReqDtoString(_tripKostil));
+                    Program.StartWithStandardUpdateHandler();
                     await MessageHandler.PrintDriverMenu(botClient, chat, msg.From.Id);
                     return;
                 }

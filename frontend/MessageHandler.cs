@@ -137,6 +137,10 @@ public static class MessageHandler
                 new InlineKeyboardButton[]
                 {
                     InlineKeyboardButton.WithCallbackData("Сменить профиль", "change profile")
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Искать поездки", "search_trips")
                 }
             });
         await botClient.SendMessage(chat.Id, "Чем я могу вам помочь?", replyMarkup: inlineKeyboard);
@@ -154,14 +158,19 @@ public static class MessageHandler
             await MoreInfoQuery(botClient, callbackQuery, chat);
             return;
         }
+        if(callbackQuery.Data.StartsWith("takeIt_"))
+        {
+            await RecordToTripQuery(botClient, callbackQuery, chat);
+            return;
+        }
         switch (callbackQuery.Data)
         {
             case "pas_button":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    PrintPassengerMenu(botClient, chat);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                PrintPassengerMenu(botClient, chat);
+                return;
+            }
             case "dri_button":
             {
                 await botClient.AnswerCallbackQuery(callbackQuery.Id);
@@ -169,17 +178,17 @@ public static class MessageHandler
                 return;
             }
             case "driver_button":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    await PrintDriverMenu(botClient, chat, user.Id);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                await PrintDriverMenu(botClient, chat, user.Id);
+                return;
+            }
             case "passenger_view_info":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    PassengerInfo.ShowPassangerCard(botClient, chat, update);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                PassengerInfo.ShowPassangerCard(botClient, chat, update);
+                return;
+            }
             case "driver_view_info":
             {
                 await botClient.AnswerCallbackQuery(callbackQuery.Id);
@@ -187,50 +196,49 @@ public static class MessageHandler
                 return;
             }
             case "view_active_pass":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    ActiveTrip.ViewPassengerActiveTrip(botClient, chat);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                ActiveTrip.ViewPassengerActiveTrip(botClient, chat);
+                return;
+            }
             case "view_active_driver":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    ActiveTrip.ViewDriverActiveTrip(botClient, chat);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                ActiveTrip.ViewDriverActiveTrip(botClient, chat);
+                return;
+            }
             case "create driver profile":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    Program.isBusy = true;
-                    ProfileHandler.StartCreatingDriverProfile(callbackQuery.Message, botClient);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                Program.isBusy = true;
+                ProfileHandler.StartCreatingDriverProfile(callbackQuery.Message, botClient);
+                return;
+            }
             case "recreate driver profile":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    Program.isBusy = true;
-                    ProfileHandler.StartCreatingDriverProfile(callbackQuery.Message, botClient);
-                    return;
-                }
-            //case "check trips":
-            //    {
-            //        await botClient.AnswerCallbackQuery(callbackQuery.Id);
-            //        var trips = ProfileHandler.SendCreatedTrips(user.Id);
-            //        await botClient.SendMessage(chat.Id, /*trips != "" ? trips :*/ "У вас нет созданных поездок");
-            //        return;
-            //    }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                Program.isBusy = true;
+                ProfileHandler.StartCreatingDriverProfile(callbackQuery.Message, botClient);
+                return;
+            }
+            case "search_trips":
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                SearchTrip.ViewSearchingTrips(botClient, chat);
+                return;
+            }
             case "create_trip":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    ProfileHandler.CreateTrip(callbackQuery.Message, botClient);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                ProfileHandler.CreateTrip(callbackQuery.Message, botClient);
+                return;
+            }
             case "change profile":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    await PrintStartMenu(botClient, chat);
-                    return;
-                }
+            {
+                await botClient.AnswerCallbackQuery(callbackQuery.Id);
+                await PrintStartMenu(botClient, chat);
+                return;
+            }
         }
         return;
     }
@@ -245,5 +253,17 @@ public static class MessageHandler
         }
 
         ActiveTrip.ViewTrip(botClient, chat, tripId);
+    }
+
+    private static async Task RecordToTripQuery(ITelegramBotClient botClient, CallbackQuery callbackQuery, Chat chat)
+    {
+        await botClient.AnswerCallbackQuery(callbackQuery.Id);
+        if (!Guid.TryParse(callbackQuery.Data.Split('_')[1], out var tripId))
+        {
+            await botClient.SendMessage(chat.Id, "Произошла ошибка при получении идентификатора поездки");
+            return;
+        }
+
+        PassengerInfo.RecortToTrip(botClient, chat, tripId);
     }
 }

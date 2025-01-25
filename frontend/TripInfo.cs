@@ -9,9 +9,14 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TGBotNVK.WebApiClient;
+using TGBotNVK.WebApiClient.Dtos.CarTrip.ReqDtos;
 using TGBotNVK.WebApiClient.Dtos.CarTrip.ResDtos;
+using TGBotNVK.WebApiClient.Dtos.General.ReqDtos;
 using static System.Net.WebRequestMethods;
 using File = System.IO.File;
+using System.Drawing;
+using System.Xml.Linq;
+using TGBotNVK.WebApiClient.Dtos.Driver.ReqDtos;
 
 namespace TGBotNVK;
 public class TripInfo
@@ -27,6 +32,149 @@ public class TripInfo
         TimeStartEnd = time;
         Price = price;
         Free = free;
+    }
+}
+
+public class SearchTrip
+{
+    private static ApiClient apiClient = new(new HttpClient());
+
+    private static IntervalSearchReqDto _intervalSearch = null;
+    private static int creatingSearchsStep;
+
+    public static async void ViewSearchingTrips(ITelegramBotClient botClient, Chat chat)
+    {
+        Program.StartBotWithAnotherUpdateHandler(IntervalSearch);
+        await botClient.SendTextMessageAsync(chat.Id, "Введите место отправления");
+
+    }
+
+    private static async Task IntervalSearch(ITelegramBotClient botClient, Update update,
+        CancellationToken cancellationToken)
+    {
+        var msg = update.Message;
+        var chat = msg.Chat;
+
+        _intervalSearch ??= new IntervalSearchReqDto();
+
+        switch (creatingSearchsStep)
+        {
+            case 0:
+                {
+                    _intervalSearch.StartPointAddress = new LocationReqDto()
+                    {
+                        Coordinate = null,
+                        TextDescription = msg.Text
+                    };
+                    await botClient.SendMessage(
+                        chat.Id,
+                        "Введите место прибытия",
+                        cancellationToken: cancellationToken);
+                    creatingSearchsStep++;
+                    return;
+                }
+            case 1:
+                {
+                    _intervalSearch.EndPointAddress = new LocationReqDto()
+                    {
+                        Coordinate = null,
+                        TextDescription = msg.Text
+                    };
+                    await botClient.SendMessage(
+                        chat.Id,
+                        "Введите максимальное время прибытия(если не желаете - N)",
+                        cancellationToken: cancellationToken);
+                    creatingSearchsStep++;
+                    return;
+                }
+            case 2:
+                {
+                    if (msg.Text.ToUpper() == "N")
+                    {
+                        _intervalSearch.MaxEndTime = null;
+                    }
+                    else {
+                        if (!DateTimeOffset.TryParse(msg.Text, out var timeOffset))
+                        {
+                            await botClient.SendMessage(chat.Id, "Некорректный формат даты, нужен DateTimeOffset");
+                            return;
+                        }
+                        _intervalSearch.MaxEndTime = timeOffset;
+                    }
+
+                    await botClient.SendMessage(
+                        chat.Id,
+                        "Введите минимальное время прибытия(если не желаете - N)",
+                        cancellationToken: cancellationToken);
+                    creatingSearchsStep++;
+                    return;
+                }
+            case 3:
+                {
+                    if (msg.Text.ToUpper() == "N")
+                    {
+                        _intervalSearch.MaxEndTime = null;
+                    }
+                    else
+                    {
+                        if (!DateTimeOffset.TryParse(msg.Text, out var timeOffset))
+                        {
+                            await botClient.SendMessage(chat.Id, "Некорректный формат даты, нужен DateTimeOffset");
+                            return;
+                        }
+                        _intervalSearch.MinDateTime = timeOffset;
+                    }
+
+                    Program.isBusy = false;
+                    creatingSearchsStep = 0;
+
+                    var searchResponse = await apiClient.SearchTripsAsync(0, 5, "1.0",
+                        _intervalSearch, cancellationToken);
+                    if (!searchResponse.IsSuccess)
+                    {
+                        await botClient.SendMessage(chat.Id, $"Произошла ошибка при поиске поездок: {searchResponse.ErrorText}");
+                        return;
+                    }
+
+                    foreach (var shortActiveTrip in searchResponse.Data)
+                    {
+                        await WriteActiveTripsResDto(botClient, chat, shortActiveTrip);
+                    }
+                    Program.StartWithStandardUpdateHandler();
+                    return;
+                }
+        }
+    }
+
+    private static async Task WriteActiveTripsResDto(ITelegramBotClient botClient, Chat chat, ShortActiveTripResDto resDto)
+    {
+        var inlineKeyboard = new InlineKeyboardMarkup(
+            new List<InlineKeyboardButton[]>()
+            {
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Поеду", $"takeIt_{resDto.Id}"),
+                },
+                new InlineKeyboardButton[]
+                {
+                    InlineKeyboardButton.WithCallbackData("Подробнее", $"moreInf_{resDto.Id}"),
+                },
+            });
+        await botClient.SendTextMessageAsync(chat.Id, GetTripShortInfoString(resDto), replyMarkup: inlineKeyboard);
+    }
+
+    private static string GetTripShortInfoString(ShortActiveTripResDto resDto)
+    {
+        var sb = new StringBuilder();
+        sb.AppendLine("=== Информация о поездке ===");
+        sb.AppendLine();
+        sb.AppendLine($"🗺️  Откуда - Куда:    {resDto.StartPoint.TextDescription} - {resDto.EndPoint.TextDescription}");
+        sb.AppendLine($"🕒  Время старта:     {resDto.TripStartTime}");
+        sb.AppendLine();
+        sb.AppendLine("=============================");
+        sb.AppendLine();
+
+        return sb.ToString();
     }
 }
 
@@ -89,7 +237,7 @@ public class ActiveTrip
                 {
                     new InlineKeyboardButton[]
                     {
-                        InlineKeyboardButton.WithCallbackData("Подробнее", $"moreInf_{0}"),
+                        InlineKeyboardButton.WithCallbackData("Подробнее", $"moreInf_{activeTrip.Id}"),
                     },
                 });
             await botClient.SendTextMessageAsync(chat.Id, GetTripShortInfoString(activeTrip), replyMarkup: inlineKeyboard);
@@ -105,15 +253,7 @@ public class ActiveTrip
             return;
         }
 
-        var inlineKeyboard = new InlineKeyboardMarkup(
-            new List<InlineKeyboardButton[]>()
-            {
-                new InlineKeyboardButton[]
-                {
-                    InlineKeyboardButton.WithCallbackData("Поеду", "takeIt"),
-                },
-            });
-        await botClient.SendTextMessageAsync(chat.Id, GetTripDetailedInfoString(getTrip.Data), replyMarkup: inlineKeyboard);
+        await botClient.SendTextMessageAsync(chat.Id, GetTripDetailedInfoString(getTrip.Data));
 
         var image = InputFile.FromUri(new Uri($"http://138.124.20.138:5878/driver_cars/{getTrip.Data.TripCar.AutoId}"));
         

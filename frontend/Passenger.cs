@@ -9,6 +9,7 @@ using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
 using Telegram.Bot.Types.ReplyMarkups;
 using TGBotNVK.WebApiClient;
+using TGBotNVK.WebApiClient.Dtos.General.ReqDtos;
 using TGBotNVK.WebApiClient.Dtos.Passenger.ResDtos;
 
 namespace TGBotNVK;
@@ -61,5 +62,31 @@ public static class PassengerInfo
         sb.AppendLine($"🚗 Поездок: {passengerShortResDto.TripsCount}");
 
         return sb.ToString();
+    }
+
+    public static async Task RecortToTrip(ITelegramBotClient botClient, Chat chat, Guid tripId)
+    {
+        var getTrip = await apiClient.GetTripInfoAsync(tripId, "1.0");
+        if (!getTrip.IsSuccess)
+        {
+            await botClient.SendTextMessageAsync(chat.Id, $"Ошибка получения информации о поездке: {getTrip.ErrorText}");
+            return;
+        }
+        var body = new RecordReqDto
+        {
+            TripId = tripId,
+            DriverId = getTrip.Data.DriverId,
+            PassengerId = chat.Id
+        };
+        var recordResponse = await apiClient.RecordToTripAsync("1.0", body);
+
+        if (recordResponse.IsSuccess)
+        {
+            await botClient.SendTextMessageAsync(chat.Id, "Вы успешно записались на поездку");
+        }
+        else
+        {
+            await botClient.SendTextMessageAsync(chat.Id, $"Ошибка записи на поездку: {recordResponse.ErrorText}");
+        }
     }
 }
