@@ -88,7 +88,7 @@ public static class MessageHandler
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Посмотреть список созданных поездок", "check trips")
+                    InlineKeyboardButton.WithCallbackData("Посмотреть список активных созданных поездок", "view_active_driver")
                 },
                 new InlineKeyboardButton[]
                 {
@@ -212,13 +212,13 @@ public static class MessageHandler
                     ProfileHandler.StartCreatingDriverProfile(callbackQuery.Message, botClient);
                     return;
                 }
-            case "check trips":
-                {
-                    await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    //var trips = ProfileHandler.GetDriverTrips(user.Id);
-                    await botClient.SendMessage(chat.Id, /*trips != "" ? trips :*/ "У вас нет созданных поездок");
-                    return;
-                }
+            //case "check trips":
+            //    {
+            //        await botClient.AnswerCallbackQuery(callbackQuery.Id);
+            //        var trips = ProfileHandler.SendCreatedTrips(user.Id);
+            //        await botClient.SendMessage(chat.Id, /*trips != "" ? trips :*/ "У вас нет созданных поездок");
+            //        return;
+            //    }
             case "create_trip":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
