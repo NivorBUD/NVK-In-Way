@@ -2,6 +2,13 @@
 
 # Этот этап используется при запуске из VS в быстром режиме (по умолчанию для конфигурации отладки)
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+
+# Установка временной зоны на Екатеринбург
+RUN apt-get update && apt-get install -y tzdata \
+    && ln -snf /usr/share/zoneinfo/Asia/Yekaterinburg /etc/localtime \
+    && echo "Asia/Yekaterinburg" > /etc/timezone \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
 USER app
 WORKDIR /app
 EXPOSE 5878

@@ -111,6 +111,12 @@ public partial class NvkInWayContext : DbContext
             entity.Property(e => e.TripId)
                 .HasMaxLength(40)
                 .HasColumnName("trip_id");
+            entity.Property(e => e.isDriverMark)
+                .HasColumnName("is_driver_mark")
+                .HasDefaultValue(false);
+            entity.Property(e => e.isPassengerMark)
+                .HasColumnName("is_passenger_mark")
+                .HasDefaultValue(false);
 
             entity.HasOne(d => d.Driver).WithMany(p => p.Records)
                 .HasForeignKey(d => d.DriverId)
@@ -202,6 +208,10 @@ public partial class NvkInWayContext : DbContext
 
             entity.Property(e => e.NotifyingProcessed)
                 .HasColumnName("notify_processed")
+                .HasDefaultValue(false);
+
+            entity.Property(e => e.Completed)
+                .HasColumnName("completed")
                 .HasDefaultValue(false);
 
             // Настройка отношений с другими сущностями

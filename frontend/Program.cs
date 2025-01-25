@@ -18,8 +18,8 @@ class Program
 
     static async Task Main()
     {
-        _botClient = new TelegramBotClient("8197866349:AAHs9I0YwiTo5QfBchG0-Q5X2eNMbNA-Q6U");
-        //_botClient = new TelegramBotClient("8026874216:AAEOlGPMXT_IjX4GvctMpFm044q8tB2C2fc");
+        //_botClient = new TelegramBotClient("7664250365:AAFEp8JUtd_6xb5PzTWPriBHXJlTO7J_KjI");
+        _botClient = new TelegramBotClient("7664250365:AAFEp8JUtd_6xb5PzTWPriBHXJlTO7J_KjI");
         _receiverOptions = new ReceiverOptions
         {
             AllowedUpdates = new[]
@@ -92,29 +92,5 @@ class Program
 
         Console.WriteLine(ErrorMessage);
         return Task.CompletedTask;
-    }
-
-    public static bool IsDriverIdInDataBase(long id)
-    {
-        return DriversDataBase.ContainsKey(id);
-    }
-
-    public static Driver GetDriverFromDatabse(long id)
-    {
-        if (IsDriverIdInDataBase(id))
-        {
-            return DriversDataBase[id];
-        }
-        else
-        {
-            var driver = new Driver(id);
-            AddDriverToDataBase(driver);
-            return driver;
-        }
-    }
-
-    public static void AddDriverToDataBase(Driver driver)
-    {
-        DriversDataBase[driver.TGId] = driver;
     }
 }
