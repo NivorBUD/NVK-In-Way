@@ -8,7 +8,7 @@ using TGBotNVK.WebApiClient.Dtos.General.ReqDtos;
 namespace TGBotNVK.WebApiClient.Dtos.CarTrip.ReqDtos
 {
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "14.2.0.0 (NJsonSchema v11.1.0.0 (Newtonsoft.Json v13.0.0.0))")]
-    public partial record CreateTripReqDto
+    public class CreateTripReqDto
     {
         [Newtonsoft.Json.JsonProperty("startPoint", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public LocationReqDto StartPoint { get; set; }
@@ -33,6 +33,5 @@ namespace TGBotNVK.WebApiClient.Dtos.CarTrip.ReqDtos
 
         [Newtonsoft.Json.JsonProperty("tripCar", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public OnlyCarIdsReqDto TripCar { get; set; }
-
     }
 }

@@ -93,28 +93,4 @@ class Program
         Console.WriteLine(ErrorMessage);
         return Task.CompletedTask;
     }
-
-    public static bool IsDriverIdInDataBase(long id)
-    {
-        return DriversDataBase.ContainsKey(id);
-    }
-
-    public static Driver GetDriverFromDatabse(long id)
-    {
-        if (IsDriverIdInDataBase(id))
-        {
-            return DriversDataBase[id];
-        }
-        else
-        {
-            var driver = new Driver(id);
-            AddDriverToDataBase(driver);
-            return driver;
-        }
-    }
-
-    public static void AddDriverToDataBase(Driver driver)
-    {
-        DriversDataBase[driver.TGId] = driver;
-    }
 }

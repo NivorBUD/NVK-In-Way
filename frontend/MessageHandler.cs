@@ -92,7 +92,7 @@ public static class MessageHandler
                 },
                 new InlineKeyboardButton[]
                 {
-                    InlineKeyboardButton.WithCallbackData("Создать поездку", "create trip")
+                    InlineKeyboardButton.WithCallbackData("Создать поездку", "create_trip")
                 },
                 new InlineKeyboardButton[]
                 {
@@ -215,11 +215,11 @@ public static class MessageHandler
             case "check trips":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
-                    var trips = ProfileHandler.GetDriverTrips(user.Id);
-                    await botClient.SendMessage(chat.Id, trips != "" ? trips : "У вас нет созданных поездок");
+                    //var trips = ProfileHandler.GetDriverTrips(user.Id);
+                    await botClient.SendMessage(chat.Id, /*trips != "" ? trips :*/ "У вас нет созданных поездок");
                     return;
                 }
-            case "create trip":
+            case "create_trip":
                 {
                     await botClient.AnswerCallbackQuery(callbackQuery.Id);
                     ProfileHandler.CreateTrip(callbackQuery.Message, botClient);
